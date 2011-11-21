@@ -1,0 +1,5 @@
+beets (1.0~b10-1) UNRELEASED; urgency=low
+
+  * Initial release (Closes: #589396)
+
+ -- Stefano Rivera <stefanor@debian.org>  Mon, 21 Nov 2011 10:20:09 +0200

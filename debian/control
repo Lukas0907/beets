@@ -1,0 +1,37 @@
+Source: beets
+Section: sound
+Priority: optional
+Maintainer: Python Applications Packaging Team <python-apps-team@lists.alioth.debian.org>
+Uploaders: Stefano Rivera <stefanor@debian.org>
+Build-Depends:
+ debhelper (>= 7.0.50~),
+ python-all (>= 2.6.6-3~),
+ python-musicbrainz2,
+ python-setuptools
+X-Python-Version: >= 2.5
+Standards-Version: 3.9.2
+Homepage: http://beets.radbox.org/
+Vcs-Svn: svn://svn.debian.org/python-apps/packages/beets/trunk/
+Vcs-Browser: http://svn.debian.org/viewsvn/python-apps/packages/beets/trunk/
+
+Package: beets
+Architecture: all
+Depends:
+ libjs-backbone,
+ libjs-jquery,
+ libjs-underscore,
+ python-musicbrainz2 (>= 0.7.2),
+ ${misc:Depends},
+ ${python:Depends}
+Suggests: python-flask, python-gst0.10
+Description: music tagger and library organizer
+ Beets is a media library management system for obsessive-compulsive music
+ geeks.
+ .
+ The purpose of beets is to get your music collection right once and for all.
+ It catalogs your collection, automatically improving its metadata as it goes
+ using the MusicBrainz database.  It then provides a set of tools for
+ manipulating and accessing your music.
+ .
+ Beets also includes a music player that implements the MPD protocol, so you
+ can play music in your beets library using any MPD client.
