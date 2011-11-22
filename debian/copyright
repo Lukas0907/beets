@@ -2,10 +2,27 @@ Format: http://anonscm.debian.org/viewvc/dep/web/deps/dep5.mdwn?view=markup&revi
 Upstream-Name: Beets
 Upstream-Contact: Adrian Sampson <adrian@radbox.org>
 Source: http://beets.radbox.org/
+Comment: Upstream source repacked to remove minified javascript with
+ un-minified versions.
 
 Files: *
 Copyright: 2010-2011, Adrian Sampson <adrian@radbox.org>
 License: Expat
+
+Files: beetsplug/web/static/backbone.js
+       beetsplug/web/static/underscore.js
+Copyright: 2010-2011, Jeremy Ashkenas, DocumentCloud Inc.
+License: Expat
+
+Files: beetsplug/web/static/jquery.js
+Copyright: 2011, John Resig,
+           2011, The Dojo Foundation
+License: Expat or GPL-2
+ You may use any jQuery project under the terms of either the MIT License or
+ the GNU General Public License (GPL) Version 2
+ .
+ On Debian GNU/Linux systems, the complete text of the GNU General
+ Public License can be found in `/usr/share/common-licenses/GPL-2'
 
 Files: debian/*
 Copyright: 2010-2011, Stefano Rivera <stefanor@debian.org>

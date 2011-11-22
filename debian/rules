@@ -4,7 +4,6 @@
 	dh $@ --with python2
 
 override_dh_auto_install:
-	find . -name .DS_Store -delete
 	dh_auto_install -- --install-lib=/usr/share/beets/
 	mv debian/beets/usr/bin/beet debian/beets/usr/share/beets
 	dh_link /usr/share/beets/beet /usr/bin/beet
