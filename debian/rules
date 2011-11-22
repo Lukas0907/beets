@@ -8,3 +8,7 @@ override_dh_auto_install:
 	dh_auto_install -- --install-lib=/usr/share/beets/
 	mv debian/beets/usr/bin/beet debian/beets/usr/share/beets
 	dh_link /usr/share/beets/beet /usr/bin/beet
+
+override_dh_installman:
+	rst2man debian/beet.rst > debian/beet.1
+	dh_installman debian/beet.1
