@@ -6,6 +6,7 @@ Uploaders: Stefano Rivera <stefanor@debian.org>
 Build-Depends:
  debhelper (>= 7.0.50~),
  python-all (>= 2.6.6-3~),
+ python-docutils,
  python-musicbrainz2,
  python-setuptools
 X-Python-Version: >= 2.5
