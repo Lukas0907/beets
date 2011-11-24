@@ -22,6 +22,7 @@ Depends:
  libjs-jquery,
  libjs-underscore,
  python-musicbrainz2 (>= 0.7.2),
+ python-pkg-resources,
  ${misc:Depends},
  ${python:Depends}
 Suggests: python-flask, python-gst0.10
