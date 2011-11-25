@@ -1,8 +1,8 @@
-beets (1.0~b10+dfsg-2) UNRELEASED; urgency=low
+beets (1.0~b10+dfsg-2) unstable; urgency=low
 
   * Depend on python-pkg-resources (Closes: #649927)
 
- -- Stefano Rivera <stefanor@debian.org>  Tue, 22 Nov 2011 22:31:18 +0200
+ -- Stefano Rivera <stefanor@debian.org>  Fri, 25 Nov 2011 22:16:27 +0200
 
 beets (1.0~b10+dfsg-1) unstable; urgency=low
 
