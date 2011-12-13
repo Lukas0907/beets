@@ -1,13 +1,29 @@
 #!/usr/bin/make -f
 
 %:
-	dh $@ --with python2
+	dh $@ --with python2,sphinxdoc
+
+override_dh_auto_build:
+	dh_auto_build
+	$(MAKE) -C docs html man BUILDDIR=$(CURDIR)/build/docs
+
+override_dh_auto_test:
+	set -e -x; \
+	for python in $(shell pyversions -r); do \
+		$$python setup.py test; \
+	done
 
 override_dh_auto_install:
 	dh_auto_install -- --install-lib=/usr/share/beets/
 	mv debian/beets/usr/bin/beet debian/beets/usr/share/beets
 	dh_link /usr/share/beets/beet /usr/bin/beet
 
-override_dh_installman:
-	rst2man debian/beet.rst > debian/beet.1
-	dh_installman debian/beet.1
+override_dh_auto_clean:
+	dh_auto_clean
+	rm -rf build
+
+override_dh_installchangelogs:
+	dh_installchangelogs docs/changelog.rst
+
+override_dh_compress:
+	dh_compress -X.html -X.txt -X.inv

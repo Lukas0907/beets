@@ -1,5 +1,4 @@
 version=3
 
 opts=uversionmangle=s/b/~b/,dversionmangle=s/\+dfsg// \
-http://code.google.com/p/beets/downloads/list .*/beets-(.*)\.tar\.gz \
-debian debian/repack.sh
+http://code.google.com/p/beets/downloads/list .*/beets-(.*)\.tar\.gz

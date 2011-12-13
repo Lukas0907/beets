@@ -2,8 +2,6 @@ Format: http://anonscm.debian.org/viewvc/dep/web/deps/dep5.mdwn?view=markup&revi
 Upstream-Name: Beets
 Upstream-Contact: Adrian Sampson <adrian@radbox.org>
 Source: http://beets.radbox.org/
-Comment: Upstream source repacked to remove minified javascript with
- un-minified versions.
 
 Files: *
 Copyright: 2010-2011, Adrian Sampson <adrian@radbox.org>

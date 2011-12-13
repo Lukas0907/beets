@@ -1,0 +1,159 @@
+Description: Use unittest2 to get new Python 2.7 unittest features on 2.6
+Author: Stefano Rivera <stefanor@debian.org>
+Bug-Upstream: http://code.google.com/p/beets/issues/detail?id=275
+Last-Update: 2011-12-13
+
+--- a/test/test_art.py
++++ b/test/test_art.py
+@@ -14,7 +14,7 @@
+ 
+ """Tests for the album art fetchers."""
+ 
+-import unittest
++import unittest2 as unittest
+ 
+ import _common
+ from beets.autotag import art
+--- a/test/test_autotag.py
++++ b/test/test_autotag.py
+@@ -14,7 +14,7 @@
+ 
+ """Tests for autotagging functionality.
+ """
+-import unittest
++import unittest2 as unittest
+ import os
+ import shutil
+ import re
+--- a/test/test_db.py
++++ b/test/test_db.py
+@@ -15,7 +15,7 @@
+ """Tests for non-query database functions of Item.
+ """
+ 
+-import unittest
++import unittest2 as unittest
+ import os
+ import sqlite3
+ import ntpath
+--- a/test/test_files.py
++++ b/test/test_files.py
+@@ -15,7 +15,7 @@
+ """Test file manipulation functionality of Item.
+ """
+ 
+-import unittest
++import unittest2 as unittest
+ import shutil
+ import os
+ import stat
+--- a/test/test_importer.py
++++ b/test/test_importer.py
+@@ -14,7 +14,7 @@
+ 
+ """Tests for the general importer functionality.
+ """
+-import unittest
++import unittest2 as unittest
+ import os
+ import shutil
+ 
+--- a/test/test_mb.py
++++ b/test/test_mb.py
+@@ -14,7 +14,7 @@
+ 
+ """Tests for MusicBrainz API wrapper.
+ """
+-import unittest
++import unittest2 as unittest
+ 
+ import _common
+ from beets.autotag import mb
+--- a/test/test_mediafile.py
++++ b/test/test_mediafile.py
+@@ -15,7 +15,7 @@
+ """Specific, edge-case tests for the MediaFile metadata layer.
+ """
+ 
+-import unittest
++import unittest2 as unittest
+ import os
+ import shutil
+ 
+--- a/test/test_mediafile_basic.py
++++ b/test/test_mediafile_basic.py
+@@ -16,7 +16,7 @@
+ layer.
+ """
+ 
+-import unittest
++import unittest2 as unittest
+ import os
+ import shutil
+ import datetime
+--- a/test/test_pipeline.py
++++ b/test/test_pipeline.py
+@@ -15,7 +15,7 @@
+ """Test the "pipeline.py" restricted parallel programming library.
+ """
+ 
+-import unittest
++import unittest2 as unittest
+ 
+ import _common
+ from beets.util import pipeline
+--- a/test/test_player.py
++++ b/test/test_player.py
+@@ -15,7 +15,7 @@
+ """Tests for BPD and music playing.
+ """
+ 
+-import unittest
++import unittest2 as unittest
+ 
+ import _common
+ from beetsplug import bpd
+--- a/test/test_query.py
++++ b/test/test_query.py
+@@ -14,7 +14,7 @@
+ 
+ """Various tests for querying the library database.
+ """
+-import unittest
++import unittest2 as unittest
+ import os
+ 
+ import _common
+--- a/test/test_ui.py
++++ b/test/test_ui.py
+@@ -14,7 +14,7 @@
+ 
+ """Tests for the command-line interface.
+ """
+-import unittest
++import unittest2 as unittest
+ import os
+ import shutil
+ import textwrap
+--- a/test/test_vfs.py
++++ b/test/test_vfs.py
+@@ -13,7 +13,7 @@
+ # included in all copies or substantial portions of the Software.
+ 
+ """Tests for the virtual filesystem builder.."""
+-import unittest
++import unittest2 as unittest
+ 
+ import _common
+ from beets import library
+--- a/test/testall.py
++++ b/test/testall.py
+@@ -14,7 +14,7 @@
+ # The above copyright notice and this permission notice shall be
+ # included in all copies or substantial portions of the Software.
+ 
+-import unittest
++import unittest2 as unittest
+ import os
+ import re
+ import sys

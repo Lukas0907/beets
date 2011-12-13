@@ -4,9 +4,9 @@ Forwarded: not-necessary
 Last-Update: 2011-11-21
 --- a/setup.py
 +++ b/setup.py
-@@ -42,7 +42,6 @@
-           'beetsplug.bpd',
+@@ -64,7 +64,6 @@
            'beetsplug.web',
+           'beetsplug.lastgenre',
        ],
 -      namespace_packages=['beetsplug'],
        entry_points={

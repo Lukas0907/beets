@@ -1,3 +1,17 @@
+beets (1.0~b11-1) UNRELEASED; urgency=low
+
+  * New upstream release (Closes: #650078)
+    - No need to repack any more, upstream uses non-minified JS.
+  * Drop dependency on python-musicbrainz2 (now uses the internal musicbrainz3
+    library, soon to be broken out into musicbrainz-ngs).
+  * Build docs, they are now included.
+    - Use upstream's manpages.
+  * Run tests, they are now included.
+    - Use unittest2 to provide newer unittest features for python2.6.
+  * Suggest python-rgain, for the rgain plugin.
+
+ -- Stefano Rivera <stefanor@debian.org>  Tue, 13 Dec 2011 12:03:09 +0200
+
 beets (1.0~b10+dfsg-2) unstable; urgency=low
 
   * Depend on python-pkg-resources (Closes: #649927)
