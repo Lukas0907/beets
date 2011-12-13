@@ -1,0 +1,12 @@
+Document: beets
+Title: beets
+Author: Adrian Sampson
+Abstract: the music geek's media organizer
+Section: Sound
+
+Format: HTML
+Index: /usr/share/doc/beets/html/index.html
+Files: /usr/share/doc/beets/html/*.html
+
+Format: Text
+Files: /usr/share/doc/beets/rst/*.txt

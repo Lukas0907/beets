@@ -6,6 +6,7 @@ beets (1.0~b11-1) UNRELEASED; urgency=low
     library, soon to be broken out into musicbrainz-ngs).
   * Build docs, they are now included.
     - Use upstream's manpages.
+    - Add doc-base entry.
   * Run tests, they are now included.
     - Use unittest2 to provide newer unittest features for python2.6.
     - Build-Depend on python-mutagen, python-munkres, and python-unidecode
