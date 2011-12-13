@@ -1,4 +1,4 @@
-beets (1.0~b11-1) UNRELEASED; urgency=low
+beets (1.0~b11-1) unstable; urgency=low
 
   * New upstream release (Closes: #650078)
     - No need to repack any more, upstream uses non-minified JS.
@@ -14,7 +14,7 @@ beets (1.0~b11-1) UNRELEASED; urgency=low
       UTF-8 locale.
   * Suggest python-rgain, for the rgain plugin.
 
- -- Stefano Rivera <stefanor@debian.org>  Tue, 13 Dec 2011 12:03:09 +0200
+ -- Stefano Rivera <stefanor@debian.org>  Tue, 13 Dec 2011 16:44:57 +0200
 
 beets (1.0~b10+dfsg-2) unstable; urgency=low
 
