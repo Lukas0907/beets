@@ -8,6 +8,9 @@ beets (1.0~b11-1) UNRELEASED; urgency=low
     - Use upstream's manpages.
   * Run tests, they are now included.
     - Use unittest2 to provide newer unittest features for python2.6.
+    - Build-Depend on python-mutagen, python-munkres, and python-unidecode
+    - Test under the en_US.UTF-8 locale, to work around a test expecting a
+      UTF-8 locale.
   * Suggest python-rgain, for the rgain plugin.
 
  -- Stefano Rivera <stefanor@debian.org>  Tue, 13 Dec 2011 12:03:09 +0200
