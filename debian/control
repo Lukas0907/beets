@@ -2,13 +2,16 @@ Source: beets
 Section: sound
 Priority: optional
 Maintainer: Python Applications Packaging Team <python-apps-team@lists.alioth.debian.org>
-Uploaders: Stefano Rivera <stefanor@debian.org>
+Uploaders:
+ Stefano Rivera <stefanor@debian.org>,
+ Simon Chopin <chopin.simon@gmail.com>
 Build-Depends:
  debhelper (>= 7.0.50~),
  locales,
  python-all (>= 2.6.6-3~),
  python-docutils,
  python-munkres,
+ python-musicbrainzngs,
  python-mutagen,
  python-setuptools,
  python-sphinx (>= 1.0.7+dfsg),
@@ -30,7 +33,7 @@ Depends:
  ${misc:Depends},
  ${python:Depends},
  ${sphinxdoc:Depends}
-Suggests: python-flask, python-gst0.10, python-rgain
+Suggests: python-acoustid, python-flask, python-gst0.10, python-rgain
 Description: music tagger and library organizer
  Beets is a media library management system for obsessive-compulsive music
  geeks.

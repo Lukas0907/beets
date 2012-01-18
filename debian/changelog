@@ -1,3 +1,16 @@
+beets (1.0~b12-1) UNRELEASED; urgency=low
+
+  * New upstream release:
+    - Patch libmpd-incompatibility included upstream.
+  * Add myself to Uploaders:
+  * Add python-musicbrainzngs in Build-Depends: since upstream dropped the embedded
+    copy
+  * Suggest the python-acoustid package for the chroma plugin
+  * Remove the egg-info directory in the clean target of debian/rules to
+    enable consecutive builds.
+
+ -- Simon Chopin <chopin.simon@gmail.com>  Wed, 18 Jan 2012 02:28:23 +0100
+
 beets (1.0~b11-2) UNRELEASED; urgency=low
 
   * Patch: libmpd-incompatibility: Allow browsing via libmpc based clients.
