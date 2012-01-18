@@ -4,7 +4,11 @@ Upstream-Contact: Adrian Sampson <adrian@radbox.org>
 Source: http://beets.radbox.org/
 
 Files: *
-Copyright: 2010-2011, Adrian Sampson <adrian@radbox.org>
+Copyright: 2010-2012, Adrian Sampson <adrian@radbox.org>
+License: Expat
+
+Files: beetsplug/replaygain.py
+Copyright: 2011, Peter Brunner (Lugoues)
 License: Expat
 
 Files: beetsplug/web/static/backbone.js
@@ -23,7 +27,8 @@ License: Expat or GPL-2
  Public License can be found in `/usr/share/common-licenses/GPL-2'
 
 Files: debian/*
-Copyright: 2010-2011, Stefano Rivera <stefanor@debian.org>
+Copyright: 2010-2012, Stefano Rivera <stefanor@debian.org>
+           2012,      Simon Chopin <chopin.simon@gmail.com>
 License: Expat
 
 License: Expat
