@@ -11,8 +11,11 @@ beets (1.0~b12-1) UNRELEASED; urgency=low
     enable consecutive builds.
 
   [ Stefano Rivera ]
+  * Refresh patches.
   * Bump copyright years, and add entries for Simon and the replaygain plugin
     from 1.0~b11.
+  * Patch: integer-timestamps: Avoid test failure on filesystems with
+    high-resolution file timestamps (Closes: #655732)
 
  -- Simon Chopin <chopin.simon@gmail.com>  Wed, 18 Jan 2012 02:28:23 +0100
 

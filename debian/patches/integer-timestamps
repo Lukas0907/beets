@@ -1,0 +1,19 @@
+Description: mtime tests at integral second resolution
+ Avoids test failure on ext4 filesystems with extra_isize enabled.
+Bug-Upstream: http://code.google.com/p/beets/issues/detail?id=298
+Bug-Debian: http://bugs.debian.org/655732
+Origin: Upstream, http://code.google.com/p/beets/source/detail?r=d8b9a078b6212fdbf5a9c8d315b88d8fcc51ffb9
+Author: Adrian Sampson <adrian@radbox.org>
+Last-Update: 2012-01-19
+
+--- a/test/test_db.py
++++ b/test/test_db.py
+@@ -750,7 +750,7 @@
+             os.remove(self.ipath)
+ 
+     def _mtime(self):
+-        return os.path.getmtime(self.ipath)
++        return int(os.path.getmtime(self.ipath))
+ 
+     def test_mtime_initially_up_to_date(self):
+         self.assertGreaterEqual(self.i.mtime, self._mtime())
