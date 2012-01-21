@@ -1,4 +1,4 @@
-beets (1.0~b12-1) UNRELEASED; urgency=low
+beets (1.0~b12-1) unstable; urgency=low
 
   [ Simon Chopin ]
   * New upstream release:
@@ -17,7 +17,7 @@ beets (1.0~b12-1) UNRELEASED; urgency=low
   * Patch: integer-timestamps: Avoid test failure on filesystems with
     high-resolution file timestamps (Closes: #655732)
 
- -- Simon Chopin <chopin.simon@gmail.com>  Wed, 18 Jan 2012 02:28:23 +0100
+ -- Simon Chopin <chopin.simon@gmail.com>  Sun, 22 Jan 2012 01:09:03 +0200
 
 beets (1.0~b11-1) unstable; urgency=low
 
