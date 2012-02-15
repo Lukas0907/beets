@@ -33,7 +33,12 @@ Depends:
  ${misc:Depends},
  ${python:Depends},
  ${sphinxdoc:Depends}
-Suggests: python-acoustid, python-flask, python-gst0.10, python-rgain
+Suggests:
+ python-acoustid,
+ python-flask,
+ python-gst0.10,
+ python-pylast,
+ python-rgain
 Description: music tagger and library organizer
  Beets is a media library management system for obsessive-compulsive music
  geeks.

@@ -1,3 +1,10 @@
+beets (1.0~b12-2) UNRELEASED; urgency=low
+
+  [ Simon Chopin ]
+  * Add python-pylast to the Suggests: field for the lastgenre plugin.
+
+ -- Simon Chopin <chopin.simon@gmail.com>  Wed, 15 Feb 2012 15:46:23 +0100
+
 beets (1.0~b12-1) unstable; urgency=low
 
   [ Simon Chopin ]
