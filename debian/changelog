@@ -1,10 +1,15 @@
-beets (1.0~b13-1) UNRELEASED; urgency=low
+beets (1.0~b13-1) unstable; urgency=low
 
-  * New upstream release. 
+  [ Simon Chopin ]
+  * New upstream release.
     - patches unittest2 and integer-timestamps included upstream
   * Add python-pylast to the Suggests: field for the lastgenre plugin.
 
- -- Simon Chopin <chopin.simon@gmail.com>  Mon, 19 Mar 2012 17:01:32 +0100
+  [ Stefano Rivera ]
+  * Update machine-readable copyright file to Format 1.0.
+  * Bump Standards-Version to 3.9.3, no changes needed.
+
+ -- Simon Chopin <chopin.simon@gmail.com>  Wed, 21 Mar 2012 12:30:24 +0200
 
 beets (1.0~b12-1) unstable; urgency=low
 
