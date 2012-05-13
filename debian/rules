@@ -8,6 +8,7 @@ override_dh_auto_build:
 	$(MAKE) -C docs html man BUILDDIR=$(CURDIR)/build/docs
 
 override_dh_auto_test:
+ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
 	# Tests (non-destructively) open the database
 	mkdir -p build/home
 	# Tests need UTF-8 locale
@@ -19,6 +20,7 @@ override_dh_auto_test:
 		LOCPATH=$(CURDIR)/build/locale LC_ALL=en_US.UTF-8 \
 		$$python setup.py test; \
 	done
+endif
 
 override_dh_auto_install:
 	dh_auto_install -- --install-lib=/usr/share/beets/
