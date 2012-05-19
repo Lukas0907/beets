@@ -31,9 +31,9 @@ Depends:
  libjs-underscore,
  python-pkg-resources,
  ${misc:Depends},
- ${python:Depends},
- ${sphinxdoc:Depends}
+ ${python:Depends}
 Suggests:
+ beets-doc,
  python-acoustid,
  python-flask,
  python-gst0.10,
@@ -50,3 +50,21 @@ Description: music tagger and library organizer
  .
  Beets also includes a music player that implements the MPD protocol, so you
  can play music in your beets library using any MPD client.
+
+Package: beets-doc
+Architecture: all
+Section: doc
+Depends: ${misc:Depends}, ${sphinxdoc:Depends}
+Description: music tagger and library organizer - documentation
+ Beets is a media library management system for obsessive-compulsive music
+ geeks.
+ .
+ The purpose of beets is to get your music collection right once and for all.
+ It catalogs your collection, automatically improving its metadata as it goes
+ using the MusicBrainz database.  It then provides a set of tools for
+ manipulating and accessing your music.
+ .
+ Beets also includes a music player that implements the MPD protocol, so you
+ can play music in your beets library using any MPD client.
+ .
+ This package provides detailed documentation on beets usage.
