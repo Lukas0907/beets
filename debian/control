@@ -55,6 +55,8 @@ Package: beets-doc
 Architecture: all
 Section: doc
 Depends: ${misc:Depends}, ${sphinxdoc:Depends}
+Breaks: beets (<< 1.0~b14-2~)
+Replaces: beets (<< 1.0~b14-2~)
 Description: music tagger and library organizer - documentation
  Beets is a media library management system for obsessive-compulsive music
  geeks.
