@@ -6,8 +6,8 @@ Uploaders:
  Stefano Rivera <stefanor@debian.org>,
  Simon Chopin <chopin.simon@gmail.com>
 Build-Depends:
- debhelper (>= 7.0.50~),
- locales,
+ debhelper (>= 8.1),
+ libc-bin (>= 2.13),
  python-all (>= 2.7.2-2~),
  python-docutils,
  python-munkres,
@@ -18,7 +18,7 @@ Build-Depends:
  python-unidecode,
  python-unittest2
 X-Python-Version: >= 2.5
-Standards-Version: 3.9.3
+Standards-Version: 3.9.4
 Homepage: http://beets.radbox.org/
 Vcs-Svn: svn://svn.debian.org/python-apps/packages/beets/trunk/
 Vcs-Browser: http://svn.debian.org/viewsvn/python-apps/packages/beets/trunk/

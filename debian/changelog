@@ -1,7 +1,14 @@
-beets (1.0~b14-3) UNRELEASED; urgency=low
+beets (1.0~b15-1) UNRELEASED; urgency=low
 
+  * New upstream release.
+    - Album art downloading has been moved into the "fetchart" plugin.
+  * Upload to experimental, as Debian is frozen for wheezy.
   * Use --ignore-namespace instead of patching setup.py
     - Bump python Build-Depends to >= 2.7.2-2.
+  * Use the C.UTF-8 locale instead of generating a UTF-8 locale at build time.
+    - Build-Depend on libc-bin (>= 2.13).
+  * Bump Standards-Version to 3.9.4.
+    - Bump debhelpers Build-Depend to 8.1, for build-{arch,indep} support.
 
  -- Stefano Rivera <stefanor@debian.org>  Sun, 03 Jun 2012 19:33:14 +0100
 

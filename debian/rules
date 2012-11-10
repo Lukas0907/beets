@@ -11,13 +11,10 @@ override_dh_auto_test:
 ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
 	# Tests (non-destructively) open the database
 	mkdir -p build/home
-	# Tests need UTF-8 locale
-	mkdir -p build/locale
-	localedef -f UTF-8 -i en_US build/locale/en_US.UTF-8/
 	set -e -x; \
 	for python in $(shell pyversions -r); do \
 		HOME=$(CURDIR)/build/home \
-		LOCPATH=$(CURDIR)/build/locale LC_ALL=en_US.UTF-8 \
+		LC_ALL=C.UTF-8 \
 		$$python setup.py test; \
 	done
 endif
