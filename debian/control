@@ -22,6 +22,7 @@ Standards-Version: 3.9.4
 Homepage: http://beets.radbox.org/
 Vcs-Svn: svn://svn.debian.org/python-apps/packages/beets/trunk/
 Vcs-Browser: http://svn.debian.org/viewsvn/python-apps/packages/beets/trunk/
+XS-Testsuite: autopkgtest
 
 Package: beets
 Architecture: all

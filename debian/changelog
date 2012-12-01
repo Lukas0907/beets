@@ -2,6 +2,8 @@ beets (1.0~b15-1) UNRELEASED; urgency=low
 
   * New upstream release.
     - Album art downloading has been moved into the "fetchart" plugin.
+  * Patch no-namespace-pkg: Don't make beetsplug a namespace package, this
+    serves no purpose, if we are installing into a private location.
   * Upload to experimental, as Debian is frozen for wheezy.
   * Use --ignore-namespace instead of patching setup.py
     - Bump python Build-Depends to >= 2.7.2-2.
@@ -9,6 +11,7 @@ beets (1.0~b15-1) UNRELEASED; urgency=low
     - Build-Depend on libc-bin (>= 2.13).
   * Bump Standards-Version to 3.9.4.
     - Bump debhelpers Build-Depend to 8.1, for build-{arch,indep} support.
+  * Add autopkgtests.
 
  -- Stefano Rivera <stefanor@debian.org>  Sun, 03 Jun 2012 19:33:14 +0100
 
