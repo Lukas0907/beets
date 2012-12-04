@@ -1,4 +1,4 @@
-beets (1.0~b15-1) UNRELEASED; urgency=low
+beets (1.0~b15-1) experimental; urgency=low
 
   * New upstream release.
     - Album art downloading has been moved into the "fetchart" plugin.
@@ -11,7 +11,7 @@ beets (1.0~b15-1) UNRELEASED; urgency=low
     - Bump debhelpers Build-Depend to 8.1, for build-{arch,indep} support.
   * Add autopkgtests.
 
- -- Stefano Rivera <stefanor@debian.org>  Sun, 03 Jun 2012 19:33:14 +0100
+ -- Stefano Rivera <stefanor@debian.org>  Tue, 04 Dec 2012 22:39:05 +0200
 
 beets (1.0~b14-2) unstable; urgency=low
 
