@@ -8,7 +8,7 @@ Uploaders:
 Build-Depends:
  debhelper (>= 8.1),
  libc-bin (>= 2.13),
- python-all (>= 2.7.2-2~),
+ python-all (>= 2.6.6-3~),
  python-docutils,
  python-munkres,
  python-musicbrainzngs,
