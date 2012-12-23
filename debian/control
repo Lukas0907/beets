@@ -35,9 +35,11 @@ Depends:
  ${python:Depends}
 Suggests:
  beets-doc,
+ libav-tools,
  python-acoustid,
  python-flask,
  python-gst0.10,
+ python-imaging,
  python-pylast,
  python-rgain
 Description: music tagger and library organizer

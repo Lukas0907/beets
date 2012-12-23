@@ -7,21 +7,18 @@ Files: *
 Copyright: 2010-2012, Adrian Sampson <adrian@radbox.org>
 License: Expat
 
-Files: beetsplug/importfeeds.py
-Copyright: 2012, Fabrice Laporte
+Files: beets/util/artresizer.py
+       beetsplug/*
+Copyright: 2012, David Brenner
+           2012, Fabrice Laporte
+           2011, Philippe Mongeau
+           2012, Jakob Schnitzer
+           2012, Blemjhoo Tezoulbr
 License: Expat
 
 Files: beetsplug/mbcollection.py
 Copyright: 2011, Jeffrey Aylesworth <jeffrey@aylesworth.ca>
 License: ISC
-
-Files: beetsplug/rdm.py
-Copyright: 2011, Philippe Mongeau
-License: Expat
-
-Files: beetsplug/replaygain.py
-Copyright: 2011, Peter Brunner (Lugoues)
-License: Expat
 
 Files: beetsplug/web/static/backbone.js
        beetsplug/web/static/underscore.js
