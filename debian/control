@@ -36,6 +36,7 @@ Depends:
 Suggests:
  beets-doc,
  libav-tools,
+ mp3gain,
  python-acoustid,
  python-flask,
  python-gst0.10,
