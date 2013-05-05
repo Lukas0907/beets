@@ -1,3 +1,9 @@
+beets (1.0.0-2) UNRELEASED; urgency=low
+
+  * Use canonical URIs for Vcs-* fields.
+
+ -- Jakub Wilk <jwilk@debian.org>  Sun, 05 May 2013 18:04:53 +0200
+
 beets (1.0.0-1) experimental; urgency=low
 
   * Initial upstream stable release.
