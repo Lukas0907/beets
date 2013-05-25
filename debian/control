@@ -11,12 +11,13 @@ Build-Depends:
  python-all (>= 2.6.6-3~),
  python-docutils,
  python-munkres,
- python-musicbrainzngs,
+ python-musicbrainzngs (>= 0.3),
  python-mutagen,
  python-setuptools,
  python-sphinx (>= 1.0.7+dfsg),
  python-unidecode,
- python-unittest2
+ python-unittest2,
+ python-yaml
 X-Python-Version: >= 2.5
 Standards-Version: 3.9.4
 Homepage: http://beets.radbox.org/
