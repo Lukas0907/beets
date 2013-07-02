@@ -1,12 +1,14 @@
-beets (1.1.0-1) UNRELEASED; urgency=low
+beets (1.2.1-1) UNRELEASED; urgency=low
 
   [ Jakub Wilk ]
   * Use canonical URIs for Vcs-* fields.
 
   [ Simon Chopin ]
   * New upstream release.
+  * Update watch file to use PyPI.
+  * Add a patch to fix a crash in the BPD plugin
 
- -- Simon Chopin <chopin.simon@gmail.com>  Tue, 07 May 2013 16:59:46 +0200
+ -- Simon Chopin <chopin.simon@gmail.com>  Tue, 02 Jul 2013 10:35:37 +0200
 
 beets (1.0.0-1) experimental; urgency=low
 

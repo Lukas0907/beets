@@ -1,4 +1,4 @@
-beets (1.1.0-1) UNRELEASED; urgency=low
+beets (1.2.1-1) unstable; urgency=low
 
   From the version 1.1.0 on, beets uses a new configuration file format based
   on YAML. The software should handle the migration on its own, however in
