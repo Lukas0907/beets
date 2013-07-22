@@ -1,0 +1,4 @@
+The following packages are imported by some plugins but are not yet in Debian:
+
+  * pyechonest
+  * discogs_client

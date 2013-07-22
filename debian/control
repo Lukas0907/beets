@@ -43,6 +43,7 @@ Suggests:
  python-gst0.10,
  python-imaging,
  python-pylast,
+ python-requests,
  python-rgain
 Description: music tagger and library organizer
  Beets is a media library management system for obsessive-compulsive music

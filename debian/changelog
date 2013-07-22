@@ -9,6 +9,8 @@ beets (1.2.1-1) UNRELEASED; urgency=low
   * Update watch file to use PyPI.
   * Add a patch to fix a crash in the BPD plugin
   * Update d/copyright with a separate paragraph for beetsplug/* Expat files
+  * Add python-requests to the Suggests field for the beatport plugin
+  * Add a TODO file to keep track of the unpackaged plugin dependencies
 
  -- Simon Chopin <chopin.simon@gmail.com>  Tue, 02 Jul 2013 10:35:37 +0200
 
