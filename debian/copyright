@@ -8,12 +8,16 @@ Copyright: 2010-2013, Adrian Sampson <adrian@radbox.org>
 License: Expat
 
 Files: beets/util/artresizer.py
-       beetsplug/*
-Copyright: 2012, David Brenner
-           2012, Fabrice Laporte
-           2011, Philippe Mongeau
-           2012, Jakob Schnitzer
-           2012, Blemjhoo Tezoulbr
+Copyright: 2012-2013, Fabrice Laporte
+License: Expat
+
+Files: beetsplug/*
+Copyright: 2012-2013, David Brenner
+           2012-2013, Fabrice Laporte
+           2011-2013, Philippe Mongeau
+           2012-2013, Jakob Schnitzer
+           2012-2013, Blemjhoo Tezoulbr
+           2013,      Pedro Silva
 License: Expat
 
 Files: beetsplug/mbcollection.py
@@ -37,7 +41,7 @@ License: Expat or GPL-2
 
 Files: debian/*
 Copyright: 2010-2013, Stefano Rivera <stefanor@debian.org>
-           2012,      Simon Chopin <chopin.simon@gmail.com>
+           2012-2013, Simon Chopin <chopin.simon@gmail.com>
 License: Expat
 
 License: Expat
