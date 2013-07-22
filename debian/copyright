@@ -30,8 +30,8 @@ Copyright: 2010-2011, Jeremy Ashkenas, DocumentCloud Inc.
 License: Expat
 
 Files: beetsplug/web/static/jquery.js
-Copyright: 2011, John Resig,
-           2011, The Dojo Foundation
+Copyright: 2011-2013, John Resig,
+           2011-2013, The Dojo Foundation
 License: Expat or GPL-2
  You may use any jQuery project under the terms of either the MIT License or
  the GNU General Public License (GPL) Version 2
