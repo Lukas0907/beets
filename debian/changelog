@@ -4,7 +4,8 @@ beets (1.2.1-1) UNRELEASED; urgency=low
   * Use canonical URIs for Vcs-* fields.
 
   [ Simon Chopin ]
-  * New upstream release.
+  * New upstream release (Closes: #715561).
+  * Upload to unstable
   * Update watch file to use PyPI.
   * Add a patch to fix a crash in the BPD plugin
 
