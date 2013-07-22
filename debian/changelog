@@ -1,4 +1,4 @@
-beets (1.2.1-1) UNRELEASED; urgency=low
+beets (1.2.1-1) unstable; urgency=low
 
   [ Jakub Wilk ]
   * Use canonical URIs for Vcs-* fields.
@@ -12,7 +12,7 @@ beets (1.2.1-1) UNRELEASED; urgency=low
   * Add python-requests to the Suggests field for the beatport plugin
   * Add a TODO file to keep track of the unpackaged plugin dependencies
 
- -- Simon Chopin <chopin.simon@gmail.com>  Tue, 02 Jul 2013 10:35:37 +0200
+ -- Simon Chopin <chopin.simon@gmail.com>  Mon, 22 Jul 2013 16:12:53 +0200
 
 beets (1.0.0-1) experimental; urgency=low
 
