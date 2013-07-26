@@ -1,3 +1,9 @@
+beets (1.2.1-2) UNRELEASED; urgency=low
+
+  * Version the dependency on python-musicbrainzngs (>= 0.4) (Closes: #717763)
+
+ -- Simon Chopin <chopin.simon@gmail.com>  Fri, 26 Jul 2013 23:16:04 +0200
+
 beets (1.2.1-1) unstable; urgency=low
 
   [ Jakub Wilk ]
