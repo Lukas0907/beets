@@ -5,7 +5,7 @@
 
 override_dh_auto_build:
 	dh_auto_build
-	$(MAKE) -C docs html man BUILDDIR=$(CURDIR)/build/docs
+	PYTHONPATH=$(CURDIR) $(MAKE) -C docs html man BUILDDIR=$(CURDIR)/build/docs
 
 override_dh_auto_test:
 ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))

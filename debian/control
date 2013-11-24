@@ -12,7 +12,7 @@ Build-Depends:
  python-docutils,
  python-munkres,
  python-musicbrainzngs (>= 0.4),
- python-mutagen (>= 1.21),
+ python-mutagen (>= 1.22),
  python-setuptools,
  python-sphinx (>= 1.0.7+dfsg),
  python-unidecode,
