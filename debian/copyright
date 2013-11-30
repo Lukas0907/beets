@@ -18,6 +18,8 @@ Copyright: 2012-2013, David Brenner
            2012-2013, Jakob Schnitzer
            2012-2013, Blemjhoo Tezoulbr
            2013,      Pedro Silva
+           2013,      Jan-Erik Dahlin
+           2013,      Verrus
 License: Expat
 
 Files: beetsplug/mbcollection.py

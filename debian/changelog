@@ -1,10 +1,14 @@
 beets (1.3.1-1) UNRELEASED; urgency=low
 
+  [ Simon Chopin ]
   * Version the dependency on python-musicbrainzngs (>= 0.4) (Closes: #717763)
   * New upstream release (Closes: #730046)
     + Bump the dependency on python-mutagen (>= 1.22)
     + Drop the fix_bpd_search patch, merged upstream.
   * Export PYTHONPATH when building the doc to build the API docs as well.
+
+  [ Stefano Rivera ]
+  * Update copyright holders
 
  -- Simon Chopin <chopin.simon@gmail.com>  Fri, 22 Nov 2013 18:06:45 +0100
 
