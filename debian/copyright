@@ -12,13 +12,16 @@ Copyright: 2012-2013, Fabrice Laporte
 License: Expat
 
 Files: beetsplug/*
-Copyright: 2012-2013, David Brenner
-           2012-2013, Fabrice Laporte
-           2011-2013, Philippe Mongeau
-           2012-2013, Jakob Schnitzer
+Copyright: 2010-2013, Adrian Sampson <adrian@radbox.org>
            2012-2013, Blemjhoo Tezoulbr
-           2013,      Pedro Silva
+           2012-2013, David Brenner
+           2012-2013, Fabrice Laporte
+           2012-2013, Jakob Schnitzer
            2013,      Jan-Erik Dahlin
+           2013,      Johann Klähn
+           2013,      Pedro Silva
+           2013,      Peter Schnebel
+           2011-2013, Philippe Mongeau
            2013,      Verrus
 License: Expat
 
@@ -42,7 +45,7 @@ License: Expat or GPL-2
  Public License can be found in `/usr/share/common-licenses/GPL-2'
 
 Files: debian/*
-Copyright: 2010-2013, Stefano Rivera <stefanor@debian.org>
+Copyright: 2010-2014, Stefano Rivera <stefanor@debian.org>
            2012-2013, Simon Chopin <chopin.simon@gmail.com>
 License: Expat
 

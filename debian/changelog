@@ -1,3 +1,12 @@
+beets (1.3.2-1) UNRELEASED; urgency=low
+
+  * New upstream release.
+    - Suggests python-mpd, for mpdstats plugin.
+  * Update (and sort) copyright holders.
+  * Bump Standards-Version to 3.9.5, no changes needed.
+
+ -- Stefano Rivera <stefanor@debian.org>  Sat, 30 Nov 2013 00:46:57 -0800
+
 beets (1.3.1-1) unstable; urgency=low
 
   [ Simon Chopin ]

@@ -19,7 +19,7 @@ Build-Depends:
  python-unittest2,
  python-yaml
 X-Python-Version: >= 2.5
-Standards-Version: 3.9.4
+Standards-Version: 3.9.5
 Homepage: http://beets.radbox.org/
 Vcs-Svn: svn://anonscm.debian.org/python-apps/packages/beets/trunk/
 Vcs-Browser: http://anonscm.debian.org/viewvc/python-apps/packages/beets/trunk/
@@ -44,6 +44,7 @@ Suggests:
  python-flask,
  python-gst0.10,
  python-imaging,
+ python-mpd,
  python-pylast,
  python-requests,
  python-rgain
