@@ -17,7 +17,8 @@ Build-Depends:
  python-sphinx (>= 1.0.7+dfsg),
  python-unidecode,
  python-unittest2,
- python-yaml
+ python-yaml,
+ python-flask
 X-Python-Version: >= 2.5
 Standards-Version: 3.9.5
 Homepage: http://beets.radbox.org/
