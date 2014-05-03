@@ -4,25 +4,25 @@ Upstream-Contact: Adrian Sampson <adrian@radbox.org>
 Source: http://beets.radbox.org/
 
 Files: *
-Copyright: 2010-2013, Adrian Sampson <adrian@radbox.org>
-License: Expat
-
-Files: beets/util/artresizer.py
-Copyright: 2012-2013, Fabrice Laporte
+Copyright: 2010-2014, Adrian Sampson <adrian@radbox.org>
+           2012-2014, Fabrice Laporte
+           2013-2014, Thomas Scholtes
 License: Expat
 
 Files: beetsplug/*
-Copyright: 2010-2013, Adrian Sampson <adrian@radbox.org>
-           2012-2013, Blemjhoo Tezoulbr
+Copyright: 2010-2014, Adrian Sampson <adrian@radbox.org>
+           2012-2014, Blemjhoo Tezoulbr
            2012-2013, David Brenner
-           2012-2013, Fabrice Laporte
-           2012-2013, Jakob Schnitzer
+           2012-2014, Fabrice Laporte
+           2012-2014, Jakob Schnitzer
            2013,      Jan-Erik Dahlin
            2013,      Johann Klähn
            2013,      Pedro Silva
            2013,      Peter Schnebel
            2011-2013, Philippe Mongeau
+           2014,      Thomas Scholtes
            2013,      Verrus
+           2014,      Yevgeny Bezman
 License: Expat
 
 Files: beetsplug/mbcollection.py

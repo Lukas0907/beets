@@ -10,15 +10,18 @@ Build-Depends:
  libc-bin (>= 2.13),
  python-all (>= 2.6.6-3~),
  python-docutils,
+ python-enum34,
+ python-flask,
+ python-mock,
  python-munkres,
  python-musicbrainzngs (>= 0.4),
  python-mutagen (>= 1.22),
+ python-responses,
  python-setuptools,
  python-sphinx (>= 1.0.7+dfsg),
  python-unidecode,
  python-unittest2,
- python-yaml,
- python-flask
+ python-yaml
 X-Python-Version: >= 2.5
 Standards-Version: 3.9.5
 Homepage: http://beets.radbox.org/
@@ -32,6 +35,7 @@ Depends:
  libjs-backbone,
  libjs-jquery,
  libjs-underscore,
+ python-enum34,
  python-musicbrainzngs (>= 0.4),
  python-mutagen (>= 1.21),
  python-pkg-resources,
@@ -42,6 +46,7 @@ Suggests:
  libav-tools,
  mp3gain,
  python-acoustid,
+ python-bs4,
  python-flask,
  python-gst0.10,
  python-imaging,
