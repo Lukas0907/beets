@@ -548,7 +548,9 @@ class ImportTask(object):
         """
         self.replaced_items = defaultdict(list)
         for item in self.imported_items():
-            dup_items = lib.items(dbcore.query.BytesQuery('path', item.path))
+            dup_items = list(lib.items(
+                dbcore.query.BytesQuery('path', item.path)
+            ))
             self.replaced_items[item] = dup_items
             for dup_item in dup_items:
                 log.debug('replacing item %i: %s' %
@@ -837,8 +839,9 @@ def read_tasks(session):
             all_items = []
             for _, items in autotag.albums_in_dir(toppath):
                 all_items += items
-            yield ImportTask(toppath, [toppath], all_items)
-            yield SentinelImportTask(toppath)
+            if all_items:
+                yield ImportTask(toppath, [toppath], all_items)
+                yield SentinelImportTask(toppath)
             continue
 
         resume_dir = None

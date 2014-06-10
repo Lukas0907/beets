@@ -40,6 +40,7 @@ import mutagen.mp4
 import mutagen.flac
 import mutagen.monkeysaudio
 import mutagen.asf
+import mutagen.aiff
 import datetime
 import re
 import base64
@@ -50,6 +51,9 @@ import os
 import logging
 import traceback
 import enum
+
+from beets.util import displayable_path
+
 
 __all__ = ['UnreadableFileError', 'FileTypeError', 'MediaFile']
 
@@ -67,27 +71,40 @@ TYPES = {
     'wv':   'WavPack',
     'mpc':  'Musepack',
     'asf':  'Windows Media',
+    'aiff': 'AIFF',
 }
 
 
 # Exceptions.
 
 class UnreadableFileError(Exception):
-    """Indicates a file that MediaFile can't read.
+    """Mutagen is not able to extract information from the file.
     """
-    pass
+    def __init__(self, path):
+        Exception.__init__(self, displayable_path(path))
 
 
 class FileTypeError(UnreadableFileError):
-    """Raised for files that don't seem to have a type MediaFile
-    supports.
+    """Reading this type of file is not supported.
+
+    If passed the `mutagen_type` argument this indicates that the
+    mutagen type is not supported by `Mediafile`.
     """
-    pass
+    def __init__(self, path, mutagen_type=None):
+        path = displayable_path(path)
+        if mutagen_type is None:
+            msg = path
+        else:
+            msg = u'{0}: of mutagen type {1}'.format(path, mutagen_type)
+        Exception.__init__(self, msg)
 
 
 class MutagenError(UnreadableFileError):
     """Raised when Mutagen fails unexpectedly---probably due to a bug.
     """
+    def __init__(self, path, mutagen_exc):
+        msg = u'{0}: {1}'.format(displayable_path(path), mutagen_exc)
+        Exception.__init__(self, msg)
 
 
 # Utility.
@@ -635,7 +652,7 @@ class MP4ImageStorageStyle(MP4ListStorageStyle):
 class MP3StorageStyle(StorageStyle):
     """Store data in ID3 frames.
     """
-    formats = ['MP3']
+    formats = ['MP3', 'AIFF']
 
     def __init__(self, key, id3_lang=None, **kwargs):
         """Create a new ID3 storage style. `id3_lang` is the value for
@@ -926,6 +943,11 @@ class FlacImageStorageStyle(ListStorageStyle):
         pic.desc = image.desc or u''
         return pic
 
+    def delete(self, mutagen_file):
+        """Remove all images from the file.
+        """
+        mutagen_file.clear_pictures()
+
 
 # MediaField is a descriptor that represents a single logical field. It
 # aggregates several StorageStyles describing how to access the data for
@@ -1050,7 +1072,10 @@ class DateField(MediaField):
             return None
 
     def __set__(self, mediafile, date):
-        self._set_date_tuple(mediafile, date.year, date.month, date.day)
+        if date is None:
+            self._set_date_tuple(mediafile, None, None, None)
+        else:
+            self._set_date_tuple(mediafile, date.year, date.month, date.day)
 
     def __delete__(self, mediafile):
         super(DateField, self).__delete__(mediafile)
@@ -1214,12 +1239,13 @@ class MediaFile(object):
             mutagen.ogg.error,
             mutagen.asf.error,
             mutagen.apev2.error,
+            mutagen.aiff.error,
         )
         try:
             self.mgfile = mutagen.File(path)
         except unreadable_exc as exc:
             log.debug(u'header parsing failed: {0}'.format(unicode(exc)))
-            raise UnreadableFileError('Mutagen could not read file')
+            raise UnreadableFileError(path)
         except IOError as exc:
             if type(exc) == IOError:
                 # This is a base IOError, not a subclass from Mutagen or
@@ -1227,16 +1253,16 @@ class MediaFile(object):
                 raise
             else:
                 log.debug(traceback.format_exc())
-                raise MutagenError('Mutagen raised an exception')
+                raise MutagenError(path, exc)
         except Exception as exc:
             # Isolate bugs in Mutagen.
             log.debug(traceback.format_exc())
             log.error('uncaught Mutagen exception in open: {0}'.format(exc))
-            raise MutagenError('Mutagen raised an exception')
+            raise MutagenError(path, exc)
 
         if self.mgfile is None:
             # Mutagen couldn't guess the type
-            raise FileTypeError('file type unsupported by Mutagen')
+            raise FileTypeError(path)
         elif (type(self.mgfile).__name__ == 'M4A' or
               type(self.mgfile).__name__ == 'MP4'):
             # This hack differentiates AAC and ALAC until we find a more
@@ -1265,9 +1291,10 @@ class MediaFile(object):
             self.type = 'mpc'
         elif type(self.mgfile).__name__ == 'ASF':
             self.type = 'asf'
+        elif type(self.mgfile).__name__ == 'AIFF':
+            self.type = 'aiff'
         else:
-            raise FileTypeError('file type %s unsupported by MediaFile' %
-                                type(self.mgfile).__name__)
+            raise FileTypeError(path, type(self.mgfile).__name__)
 
         # add a set of tags if it's missing
         if self.mgfile.tags is None:
@@ -1297,7 +1324,7 @@ class MediaFile(object):
         except Exception as exc:
             log.debug(traceback.format_exc())
             log.error('uncaught Mutagen exception in save: {0}'.format(exc))
-            raise MutagenError('Mutagen raised an exception')
+            raise MutagenError(self.path, exc)
 
     def delete(self):
         """Remove the current metadata tag from the file.

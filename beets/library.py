@@ -15,12 +15,12 @@
 """The core data store and collection logic for beets.
 """
 import os
-import re
 import sys
 import logging
 import shlex
 import unicodedata
 import time
+import re
 from unidecode import unidecode
 from beets.mediafile import MediaFile, MutagenError
 from beets import plugins
@@ -108,6 +108,33 @@ class PathType(types.Type):
             return value
 
 
+class MusicalKey(types.String):
+    """String representing the musical key of a song.
+
+    The standard format is C, Cm, C#, C#m, etc.
+    """
+    ENHARMONIC = {
+        r'db': 'c#',
+        r'eb': 'd#',
+        r'gb': 'f#',
+        r'ab': 'g#',
+        r'bb': 'a#',
+    }
+
+    def parse(self, key):
+        key = key.lower()
+        for flat, sharp in self.ENHARMONIC.items():
+            key = re.sub(flat, sharp, key)
+        key = re.sub(r'[\W\s]+minor', 'm', key)
+        return key.capitalize()
+
+    def normalize(self, key):
+        if key is None:
+            return None
+        else:
+            return self.parse(key)
+
+
 # Special path format key.
 PF_KEY_DEFAULT = 'default'
 
@@ -193,21 +220,21 @@ class Item(LibModel):
     _table = 'items'
     _flex_table = 'item_attributes'
     _fields = {
-        'id':       types.Id(True),
+        'id':       types.PRIMARY_ID,
         'path':     PathType(),
-        'album_id': types.Id(False),
+        'album_id': types.FOREIGN_ID,
 
-        'title':                types.String(),
-        'artist':               types.String(),
-        'artist_sort':          types.String(),
-        'artist_credit':        types.String(),
-        'album':                types.String(),
-        'albumartist':          types.String(),
-        'albumartist_sort':     types.String(),
-        'albumartist_credit':   types.String(),
-        'genre':                types.String(),
-        'composer':             types.String(),
-        'grouping':             types.String(),
+        'title':                types.STRING,
+        'artist':               types.STRING,
+        'artist_sort':          types.STRING,
+        'artist_credit':        types.STRING,
+        'album':                types.STRING,
+        'albumartist':          types.STRING,
+        'albumartist_sort':     types.STRING,
+        'albumartist_credit':   types.STRING,
+        'genre':                types.STRING,
+        'composer':             types.STRING,
+        'grouping':             types.STRING,
         'year':                 types.PaddedInt(4),
         'month':                types.PaddedInt(2),
         'day':                  types.PaddedInt(2),
@@ -215,44 +242,44 @@ class Item(LibModel):
         'tracktotal':           types.PaddedInt(2),
         'disc':                 types.PaddedInt(2),
         'disctotal':            types.PaddedInt(2),
-        'lyrics':               types.String(),
-        'comments':             types.String(),
-        'bpm':                  types.Integer(),
-        'comp':                 types.Boolean(),
-        'mb_trackid':           types.String(),
-        'mb_albumid':           types.String(),
-        'mb_artistid':          types.String(),
-        'mb_albumartistid':     types.String(),
-        'albumtype':            types.String(),
-        'label':                types.String(),
-        'acoustid_fingerprint': types.String(),
-        'acoustid_id':          types.String(),
-        'mb_releasegroupid':    types.String(),
-        'asin':                 types.String(),
-        'catalognum':           types.String(),
-        'script':               types.String(),
-        'language':             types.String(),
-        'country':              types.String(),
-        'albumstatus':          types.String(),
-        'media':                types.String(),
-        'albumdisambig':        types.String(),
-        'disctitle':            types.String(),
-        'encoder':              types.String(),
-        'rg_track_gain':        types.NullFloat(),
-        'rg_track_peak':        types.NullFloat(),
-        'rg_album_gain':        types.NullFloat(),
-        'rg_album_peak':        types.NullFloat(),
+        'lyrics':               types.STRING,
+        'comments':             types.STRING,
+        'bpm':                  types.INTEGER,
+        'comp':                 types.BOOLEAN,
+        'mb_trackid':           types.STRING,
+        'mb_albumid':           types.STRING,
+        'mb_artistid':          types.STRING,
+        'mb_albumartistid':     types.STRING,
+        'albumtype':            types.STRING,
+        'label':                types.STRING,
+        'acoustid_fingerprint': types.STRING,
+        'acoustid_id':          types.STRING,
+        'mb_releasegroupid':    types.STRING,
+        'asin':                 types.STRING,
+        'catalognum':           types.STRING,
+        'script':               types.STRING,
+        'language':             types.STRING,
+        'country':              types.STRING,
+        'albumstatus':          types.STRING,
+        'media':                types.STRING,
+        'albumdisambig':        types.STRING,
+        'disctitle':            types.STRING,
+        'encoder':              types.STRING,
+        'rg_track_gain':        types.NULL_FLOAT,
+        'rg_track_peak':        types.NULL_FLOAT,
+        'rg_album_gain':        types.NULL_FLOAT,
+        'rg_album_peak':        types.NULL_FLOAT,
         'original_year':        types.PaddedInt(4),
         'original_month':       types.PaddedInt(2),
         'original_day':         types.PaddedInt(2),
-        'initial_key':          types.MusicalKey(),
+        'initial_key':          MusicalKey(),
 
-        'length':      types.Float(),
+        'length':      types.FLOAT,
         'bitrate':     types.ScaledInt(1000, u'kbps'),
-        'format':      types.String(),
+        'format':      types.STRING,
         'samplerate':  types.ScaledInt(1000, u'kHz'),
-        'bitdepth':    types.Integer(),
-        'channels':    types.Integer(),
+        'bitdepth':    types.INTEGER,
+        'channels':    types.INTEGER,
         'mtime':       DateType(),
         'added':       DateType(),
     }
@@ -366,7 +393,7 @@ class Item(LibModel):
         else:
             path = normpath(path)
         try:
-            mediafile = MediaFile(path)
+            mediafile = MediaFile(syspath(path))
         except (OSError, IOError) as exc:
             raise ReadError(self.path, exc)
 
@@ -577,20 +604,20 @@ class FormattedItemMapping(dbcore.db.FormattedMapping):
     ``item[key]`` or ``album[key]``. Here `album` is the album
     associated to `item` if it exists.
     """
-    # FIXME This class should be in the same module as `FormattedMapping`
-
     def __init__(self, item, for_path=False):
-        self.for_path = for_path
-        self.model = item
-        self.model_keys = item.keys(True)
+        super(FormattedItemMapping, self).__init__(item, for_path)
         self.album = item.get_album()
         self.album_keys = []
         if self.album:
             for key in self.album.keys(True):
                 if key in Album.item_keys or key not in item._fields.keys():
                     self.album_keys.append(key)
+        self.all_keys = set(self.model_keys).union(self.album_keys)
 
-    def get(self, key):
+    def _get(self, key):
+        """Get the value for a key, either from the album or the item.
+        Raise a KeyError for invalid keys.
+        """
         if key in self.album_keys:
             return self.album._get_formatted(key, self.for_path)
         elif key in self.model_keys:
@@ -599,17 +626,25 @@ class FormattedItemMapping(dbcore.db.FormattedMapping):
             raise KeyError(key)
 
     def __getitem__(self, key):
-        value = self.get(key)
+        """Get the value for a key. Certain unset values are remapped.
+        """
+        value = self._get(key)
 
+        # `artist` and `albumartist` fields fall back to one another.
+        # This is helpful in path formats when the album artist is unset
+        # on as-is imports.
         if key == 'artist' and not value:
-            return self.get('albumartist')
-        if key == 'albumartist' and not value:
-            return self.get('artist')
+            return self._get('albumartist')
+        elif key == 'albumartist' and not value:
+            return self._get('artist')
+        else:
+            return value
 
-        return value
+    def __iter__(self):
+        return iter(self.all_keys)
 
-    def __contains__(self, key):
-        return key in self.model_keys or key in self.album_keys
+    def __len__(self):
+        return len(self.all_keys)
 
 
 class Album(LibModel):
@@ -620,36 +655,36 @@ class Album(LibModel):
     _table = 'albums'
     _flex_table = 'album_attributes'
     _fields = {
-        'id':      types.Id(True),
+        'id':      types.PRIMARY_ID,
         'artpath': PathType(),
         'added':   DateType(),
 
-        'albumartist':        types.String(),
-        'albumartist_sort':   types.String(),
-        'albumartist_credit': types.String(),
-        'album':              types.String(),
-        'genre':              types.String(),
+        'albumartist':        types.STRING,
+        'albumartist_sort':   types.STRING,
+        'albumartist_credit': types.STRING,
+        'album':              types.STRING,
+        'genre':              types.STRING,
         'year':               types.PaddedInt(4),
         'month':              types.PaddedInt(2),
         'day':                types.PaddedInt(2),
         'tracktotal':         types.PaddedInt(2),
         'disctotal':          types.PaddedInt(2),
-        'comp':               types.Boolean(),
-        'mb_albumid':         types.String(),
-        'mb_albumartistid':   types.String(),
-        'albumtype':          types.String(),
-        'label':              types.String(),
-        'mb_releasegroupid':  types.String(),
-        'asin':               types.String(),
-        'catalognum':         types.String(),
-        'script':             types.String(),
-        'language':           types.String(),
-        'country':            types.String(),
-        'albumstatus':        types.String(),
-        'media':              types.String(),
-        'albumdisambig':      types.String(),
-        'rg_album_gain':      types.NullFloat(),
-        'rg_album_peak':      types.NullFloat(),
+        'comp':               types.BOOLEAN,
+        'mb_albumid':         types.STRING,
+        'mb_albumartistid':   types.STRING,
+        'albumtype':          types.STRING,
+        'label':              types.STRING,
+        'mb_releasegroupid':  types.STRING,
+        'asin':               types.STRING,
+        'catalognum':         types.STRING,
+        'script':             types.STRING,
+        'language':           types.STRING,
+        'country':            types.STRING,
+        'albumstatus':        types.STRING,
+        'media':              types.STRING,
+        'albumdisambig':      types.STRING,
+        'rg_album_gain':      types.NULL_FLOAT,
+        'rg_album_peak':      types.NULL_FLOAT,
         'original_year':      types.PaddedInt(4),
         'original_month':     types.PaddedInt(2),
         'original_day':       types.PaddedInt(2),
@@ -850,120 +885,20 @@ class Album(LibModel):
                     item.store()
 
 
-# Query construction and parsing helpers.
-
-PARSE_QUERY_PART_REGEX = re.compile(
-    # Non-capturing optional segment for the keyword.
-    r'(?:'
-    r'(\S+?)'    # The field key.
-    r'(?<!\\):'  # Unescaped :
-    r')?'
-
-    r'(.*)',         # The term itself.
-
-    re.I  # Case-insensitive.
-)
-
-
-def parse_query_part(part, query_classes={}, prefixes={},
-                     default_class=dbcore.query.SubstringQuery):
-    """Take a query in the form of a key/value pair separated by a
-    colon and return a tuple of `(key, value, cls)`. `key` may be None,
-    indicating that any field may be matched. `cls` is a subclass of
-    `FieldQuery`.
-
-    The optional `query_classes` parameter maps field names to default
-    query types; `default_class` is the fallback. `prefixes` is a map
-    from query prefix markers and query types. Prefix-indicated queries
-    take precedence over type-based queries.
-
-    To determine the query class, two factors are used: prefixes and
-    field types. For example, the colon prefix denotes a regular
-    expression query and a type map might provide a special kind of
-    query for numeric values. If neither a prefix nor a specific query
-    class is available, `default_class` is used.
-
-    For instance,
-    'stapler' -> (None, 'stapler', SubstringQuery)
-    'color:red' -> ('color', 'red', SubstringQuery)
-    ':^Quiet' -> (None, '^Quiet', RegexpQuery)
-    'color::b..e' -> ('color', 'b..e', RegexpQuery)
-
-    Prefixes may be "escaped" with a backslash to disable the keying
-    behavior.
-    """
-    part = part.strip()
-    match = PARSE_QUERY_PART_REGEX.match(part)
-
-    assert match  # Regex should always match.
-    key = match.group(1)
-    term = match.group(2).replace('\:', ':')
-
-    # Match the search term against the list of prefixes.
-    for pre, query_class in prefixes.items():
-        if term.startswith(pre):
-            return key, term[len(pre):], query_class
-
-    # No matching prefix: use type-based or fallback/default query.
-    query_class = query_classes.get(key, default_class)
-    return key, term, query_class
-
-
-def construct_query_part(query_part, model_cls):
-    """Create a query from a single query component, `query_part`, for
-    querying instances of `model_cls`. Return a `Query` instance.
-    """
-    # Shortcut for empty query parts.
-    if not query_part:
-        return dbcore.query.TrueQuery()
-
-    # Set up and parse the string.
-    query_classes = dict((k, t.query) for (k, t) in model_cls._fields.items())
-    prefixes = {':': dbcore.query.RegexpQuery}
-    prefixes.update(plugins.queries())
-    key, pattern, query_class = \
-        parse_query_part(query_part, query_classes, prefixes)
-
-    # No key specified.
-    if key is None:
-        if os.sep in pattern and 'path' in model_cls._fields:
-            # This looks like a path.
-            return PathQuery('path', pattern)
-        elif issubclass(query_class, dbcore.FieldQuery):
-            # The query type matches a specific field, but none was
-            # specified. So we use a version of the query that matches
-            # any field.
-            return dbcore.query.AnyFieldQuery(pattern,
-                                              model_cls._search_fields,
-                                              query_class)
-        else:
-            # Other query type.
-            return query_class(pattern)
-
-    key = key.lower()
-    return query_class(key.lower(), pattern, key in model_cls._fields)
-
-
-def query_from_strings(query_cls, model_cls, query_parts):
-    """Creates a collection query of type `query_cls` from a list of
-    strings in the format used by parse_query_part. `model_cls`
-    determines how queries are constructed from strings.
-    """
-    subqueries = []
-    for part in query_parts:
-        subqueries.append(construct_query_part(part, model_cls))
-    if not subqueries:  # No terms in query.
-        subqueries = [dbcore.query.TrueQuery()]
-    return query_cls(subqueries)
-
+# Query construction helper.
 
 def get_query(val, model_cls):
-    """Takes a value which may be None, a query string, a query string
-    list, or a Query object, and returns a suitable Query object.
+    """Take a value which may be None, a query string, a query string
+    list, or a Query object, and return a suitable Query object.
+
     `model_cls` is the subclass of Model indicating which entity this
     is a query for (i.e., Album or Item) and is used to determine which
     fields are searched.
     """
+    # Get query types and their prefix characters.
+    prefixes = {':': dbcore.query.RegexpQuery}
+    prefixes.update(plugins.queries())
+
     # Convert a single string into a list of space-separated
     # criteria.
     if isinstance(val, basestring):
@@ -976,10 +911,36 @@ def get_query(val, model_cls):
 
     if val is None:
         return dbcore.query.TrueQuery()
+
     elif isinstance(val, list) or isinstance(val, tuple):
-        return query_from_strings(dbcore.AndQuery, model_cls, val)
+        # Special-case path-like queries, which are non-field queries
+        # containing path separators (/).
+        if 'path' in model_cls._fields:
+            path_parts = []
+            non_path_parts = []
+            for s in val:
+                if s.find(os.sep, 0, s.find(':')) != -1:
+                    # Separator precedes colon.
+                    path_parts.append(s)
+                else:
+                    non_path_parts.append(s)
+        else:
+            path_parts = ()
+            non_path_parts = val
+
+        # Parse remaining parts and construct an AndQuery.
+        query = dbcore.query_from_strings(
+            dbcore.AndQuery, model_cls, prefixes, non_path_parts
+        )
+
+        # Add path queries to aggregate query.
+        if path_parts:
+            query.subqueries += [PathQuery('path', s) for s in path_parts]
+        return query
+
     elif isinstance(val, dbcore.Query):
         return val
+
     else:
         raise ValueError('query must be None or have type Query or str')
 

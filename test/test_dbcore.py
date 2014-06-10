@@ -29,8 +29,11 @@ class TestModel1(dbcore.Model):
     _table = 'test'
     _flex_table = 'testflex'
     _fields = {
-        'id': dbcore.types.Id(),
-        'field_one': dbcore.types.Integer(),
+        'id': dbcore.types.PRIMARY_ID,
+        'field_one': dbcore.types.INTEGER,
+    }
+    _types = {
+        'some_float_field': dbcore.types.FLOAT,
     }
 
     @classmethod
@@ -48,9 +51,9 @@ class TestDatabase1(dbcore.Database):
 
 class TestModel2(TestModel1):
     _fields = {
-        'id': dbcore.types.Id(),
-        'field_one': dbcore.types.Integer(),
-        'field_two': dbcore.types.Integer(),
+        'id': dbcore.types.PRIMARY_ID,
+        'field_one': dbcore.types.INTEGER,
+        'field_two': dbcore.types.INTEGER,
     }
 
 
@@ -61,10 +64,10 @@ class TestDatabase2(dbcore.Database):
 
 class TestModel3(TestModel1):
     _fields = {
-        'id': dbcore.types.Id(),
-        'field_one': dbcore.types.Integer(),
-        'field_two': dbcore.types.Integer(),
-        'field_three': dbcore.types.Integer(),
+        'id': dbcore.types.PRIMARY_ID,
+        'field_one': dbcore.types.INTEGER,
+        'field_two': dbcore.types.INTEGER,
+        'field_three': dbcore.types.INTEGER,
     }
 
 
@@ -75,11 +78,11 @@ class TestDatabase3(dbcore.Database):
 
 class TestModel4(TestModel1):
     _fields = {
-        'id': dbcore.types.Id(),
-        'field_one': dbcore.types.Integer(),
-        'field_two': dbcore.types.Integer(),
-        'field_three': dbcore.types.Integer(),
-        'field_four': dbcore.types.Integer(),
+        'id': dbcore.types.PRIMARY_ID,
+        'field_one': dbcore.types.INTEGER,
+        'field_two': dbcore.types.INTEGER,
+        'field_three': dbcore.types.INTEGER,
+        'field_four': dbcore.types.INTEGER,
     }
 
 
@@ -92,8 +95,8 @@ class AnotherTestModel(TestModel1):
     _table = 'another'
     _flex_table = 'anotherflex'
     _fields = {
-        'id': dbcore.types.Id(),
-        'foo': dbcore.types.Integer(),
+        'id': dbcore.types.PRIMARY_ID,
+        'foo': dbcore.types.INTEGER,
     }
 
 
@@ -242,6 +245,11 @@ class ModelTest(_common.TestCase):
         model.foo = None
         self.assertEqual(model.foo, None)
 
+    def test_normalization_for_typed_flex_fields(self):
+        model = TestModel1()
+        model.some_float_field = None
+        self.assertEqual(model.some_float_field, 0.0)
+
 
 class FormatTest(_common.TestCase):
     def test_format_fixed_field(self):
@@ -268,6 +276,12 @@ class FormatTest(_common.TestCase):
         value = model._get_formatted('other_field')
         self.assertEqual(value, u'')
 
+    def test_format_typed_flex_field(self):
+        model = TestModel1()
+        model.some_float_field = 3.14159265358979
+        value = model._get_formatted('some_float_field')
+        self.assertEqual(value, u'3.1')
+
 
 class FormattedMappingTest(_common.TestCase):
     def test_keys_equal_model_keys(self):
@@ -281,15 +295,121 @@ class FormattedMappingTest(_common.TestCase):
         with self.assertRaises(KeyError):
             formatted['other_field']
 
+    def test_get_method_with_none_default(self):
+        model = TestModel1()
+        formatted = model._formatted_mapping()
+        self.assertIsNone(formatted.get('other_field'))
+
+    def test_get_method_with_specified_default(self):
+        model = TestModel1()
+        formatted = model._formatted_mapping()
+        self.assertEqual(formatted.get('other_field', 'default'), 'default')
+
 
 class ParseTest(_common.TestCase):
     def test_parse_fixed_field(self):
         value = TestModel1._parse('field_one', u'2')
+        self.assertIsInstance(value, int)
         self.assertEqual(value, 2)
+
+    def test_parse_flex_field(self):
+        value = TestModel1._parse('some_float_field', u'2')
+        self.assertIsInstance(value, float)
+        self.assertEqual(value, 2.0)
 
     def test_parse_untyped_field(self):
         value = TestModel1._parse('field_nine', u'2')
         self.assertEqual(value, u'2')
+
+
+class QueryParseTest(_common.TestCase):
+    def pqp(self, part):
+        return dbcore.queryparse.parse_query_part(
+            part,
+            {'year': dbcore.query.NumericQuery},
+            {':': dbcore.query.RegexpQuery},
+        )
+
+    def test_one_basic_term(self):
+        q = 'test'
+        r = (None, 'test', dbcore.query.SubstringQuery)
+        self.assertEqual(self.pqp(q), r)
+
+    def test_one_keyed_term(self):
+        q = 'test:val'
+        r = ('test', 'val', dbcore.query.SubstringQuery)
+        self.assertEqual(self.pqp(q), r)
+
+    def test_colon_at_end(self):
+        q = 'test:'
+        r = ('test', '', dbcore.query.SubstringQuery)
+        self.assertEqual(self.pqp(q), r)
+
+    def test_one_basic_regexp(self):
+        q = r':regexp'
+        r = (None, 'regexp', dbcore.query.RegexpQuery)
+        self.assertEqual(self.pqp(q), r)
+
+    def test_keyed_regexp(self):
+        q = r'test::regexp'
+        r = ('test', 'regexp', dbcore.query.RegexpQuery)
+        self.assertEqual(self.pqp(q), r)
+
+    def test_escaped_colon(self):
+        q = r'test\:val'
+        r = (None, 'test:val', dbcore.query.SubstringQuery)
+        self.assertEqual(self.pqp(q), r)
+
+    def test_escaped_colon_in_regexp(self):
+        q = r':test\:regexp'
+        r = (None, 'test:regexp', dbcore.query.RegexpQuery)
+        self.assertEqual(self.pqp(q), r)
+
+    def test_single_year(self):
+        q = 'year:1999'
+        r = ('year', '1999', dbcore.query.NumericQuery)
+        self.assertEqual(self.pqp(q), r)
+
+    def test_multiple_years(self):
+        q = 'year:1999..2010'
+        r = ('year', '1999..2010', dbcore.query.NumericQuery)
+        self.assertEqual(self.pqp(q), r)
+
+    def test_empty_query_part(self):
+        q = ''
+        r = (None, '', dbcore.query.SubstringQuery)
+        self.assertEqual(self.pqp(q), r)
+
+
+class QueryFromStringsTest(_common.TestCase):
+    def qfs(self, strings):
+        return dbcore.queryparse.query_from_strings(
+            dbcore.query.AndQuery,
+            TestModel1,
+            {':': dbcore.query.RegexpQuery},
+            strings,
+        )
+
+    def test_zero_parts(self):
+        q = self.qfs([])
+        self.assertIsInstance(q, dbcore.query.AndQuery)
+        self.assertEqual(len(q.subqueries), 1)
+        self.assertIsInstance(q.subqueries[0], dbcore.query.TrueQuery)
+
+    def test_two_parts(self):
+        q = self.qfs(['foo', 'bar:baz'])
+        self.assertIsInstance(q, dbcore.query.AndQuery)
+        self.assertEqual(len(q.subqueries), 2)
+        self.assertIsInstance(q.subqueries[0], dbcore.query.AnyFieldQuery)
+        self.assertIsInstance(q.subqueries[1], dbcore.query.SubstringQuery)
+
+    def test_parse_fixed_type_query(self):
+        q = self.qfs(['field_one:2..3'])
+        self.assertIsInstance(q.subqueries[0], dbcore.query.NumericQuery)
+
+    def test_parse_flex_type_query(self):
+        q = self.qfs(['some_float_field:2..3'])
+        self.assertIsInstance(q.subqueries[0], dbcore.query.NumericQuery)
 
 
 def suite():

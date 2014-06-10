@@ -96,6 +96,23 @@ When you choose to apply changes during an import, beets will search for art as
 described above.  For "as-is" imports (and non-autotagged imports using the
 ``-A`` flag), beets only looks for art on the local filesystem.
 
+Google Image Search
+'''''''''''''''''''
+
+You can optionally search for cover art on `Google Images`_. This option uses
+the first hit for a search query consisting of the artist and album name. It
+is therefore approximate: "incorrect" image matches are possible (although
+unlikely).
+
+.. _Google Images: http://images.google.com/
+
+To enable gathering art from Google, enable the ``google_search`` option in
+your config file::
+
+    fetchart:
+        google_search: true
+        
+
 Embedding Album Art
 -------------------
 

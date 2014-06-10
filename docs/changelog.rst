@@ -1,6 +1,44 @@
 Changelog
 =========
 
+1.3.7 (in development)
+----------------------
+
+New stuff
+
+* The new :doc:`/plugins/importadded` reads files' modification times to set
+  their "added" date. Thanks to Stig Inge Lea Bjørnsen.
+* Support for AIFF files. Tags are stored as ID3 frames in one of the file's
+  IFF chunks.
+
+Little improvements and fixes:
+
+* :doc:`/plugins/web`: Lyrics now display readably with correct line breaks.
+  Also, the detail view scrolls to reveal all of the lyrics. Thanks to Meet
+  Udeshi.
+* Compatibility with the latest version of Mutagen, 1.23.
+* :doc:`/plugins/fetchart`: You can now optionally search for cover art on
+  Google Image Search. Thanks to Lemutar.
+* :doc:`/plugins/play`: The ``command`` config option can now contain
+  arguments (rather than just an executable). Thanks to Alessandro Ghedini.
+* Fix an error when using the :ref:`modify-cmd` command to remove a flexible
+  attribute. Thanks to Pierre Rust.
+* :doc:`/plugins/info`: The command now shows audio properties (e.g., bitrate)
+  in addition to metadata. Thanks Alessandro Ghedini.
+* Avoid a crash on Windows when writing to files with special characters in
+  their names.
+* :doc:`/plugins/play`: Playing albums now generates filenames by default (as
+  opposed to directories) for better compatibility. The ``use_folders`` option
+  restores the old behavior. Thanks to Lucas Duailibe.
+* Fix an error when importing an empty directory with the ``--flat`` option.
+* :doc:`/plugins/mpdstats`: The last song in a playlist is now correctly
+  counted as played. Thanks to Johann Klähn.
+* :doc:`/plugins/zero`: Prevent accidental nulling of dangerous fields (IDs
+  and paths). Thanks to brunal.
+* The :ref:`remove-cmd` command now shows the paths of files that will be
+  deleted. Thanks again to brunal.
+
+
 1.3.6 (May 10, 2014)
 --------------------
 

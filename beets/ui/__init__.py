@@ -576,13 +576,13 @@ def _field_diff(field, old, new):
         return None
 
     # Get formatted values for output.
-    oldstr = old.formatted.get(field) or u''
-    newstr = new.formatted.get(field) or u''
+    oldstr = old.formatted.get(field, u'')
+    newstr = new.formatted.get(field, u'')
 
     # For strings, highlight changes. For others, colorize the whole
     # thing.
     if isinstance(oldval, basestring):
-        oldstr, newstr = colordiff(oldval, newval)
+        oldstr, newstr = colordiff(oldval, newstr)
     else:
         oldstr, newstr = colorize('red', oldstr), colorize('red', newstr)
 
@@ -615,6 +615,9 @@ def show_model_changes(new, old=None, fields=None, always=False):
 
     # New fields.
     for field in set(new) - set(old):
+        if fields and field not in fields:
+            continue
+
         changes.append(u'  {0}: {1}'.format(
             field,
             colorize('red', new.formatted[field])

@@ -14,8 +14,6 @@
 
 """Representation of type information for DBCore model fields.
 """
-import re
-
 from . import query
 from beets.util import str2bool
 
@@ -28,11 +26,11 @@ class Type(object):
     field.
     """
 
-    sql = None
+    sql = u'TEXT'
     """The SQLite column type for the value.
     """
 
-    query = None
+    query = query.SubstringQuery
     """The `Query` subclass to be used when querying the field.
     """
 
@@ -44,20 +42,28 @@ class Type(object):
         """Given a value of this type, produce a Unicode string
         representing the value. This is used in template evaluation.
         """
-        raise NotImplementedError()
+        # Fallback formatter. Convert to Unicode at all cost.
+        if value is None:
+            return u''
+        elif isinstance(value, basestring):
+            if isinstance(value, bytes):
+                return value.decode('utf8', 'ignore')
+            else:
+                return value
+        else:
+            return unicode(value)
 
     def parse(self, string):
         """Parse a (possibly human-written) string and return the
         indicated value of this type.
         """
-        raise NotImplementedError()
+        return string
 
     def normalize(self, value):
         """Given a value that will be assigned into a field of this
         type, normalize the value to have the appropriate type. This
         base implementation only reinterprets `None`.
         """
-        # TODO gradually remove the normalization of None.
         if value is None:
             return self.null
         else:
@@ -168,29 +174,12 @@ class Boolean(Type):
         return str2bool(string)
 
 
-class MusicalKey(String):
-    """String representing the musical key of a song.
-
-    The standard format is C, Cm, C#, C#m, etc.
-    """
-
-    ENHARMONIC = {
-        r'db': 'c#',
-        r'eb': 'd#',
-        r'gb': 'f#',
-        r'ab': 'g#',
-        r'bb': 'a#',
-    }
-
-    def parse(self, key):
-        key = key.lower()
-        for flat, sharp in self.ENHARMONIC.items():
-            key = re.sub(flat, sharp, key)
-        key = re.sub(r'[\W\s]+minor', 'm', key)
-        return key.capitalize()
-
-    def normalize(self, key):
-        if key is None:
-            return None
-        else:
-            return self.parse(key)
+# Shared instances of common types.
+BASE_TYPE = Type()
+INTEGER = Integer()
+PRIMARY_ID = Id(True)
+FOREIGN_ID = Id(False)
+FLOAT = Float()
+NULL_FLOAT = NullFloat()
+STRING = String()
+BOOLEAN = Boolean()

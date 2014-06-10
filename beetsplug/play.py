@@ -21,6 +21,7 @@ from beets import ui
 from beets import util
 import platform
 import logging
+import shlex
 from tempfile import NamedTemporaryFile
 
 log = logging.getLogger('beets')
@@ -30,45 +31,54 @@ def play_music(lib, opts, args):
     """Execute query, create temporary playlist and execute player
     command passing that playlist.
     """
-
-    command = config['play']['command'].get()
-
-    # If a command isn't set then let the OS decide how to open the playlist.
-    if not command:
+    command_str = config['play']['command'].get()
+    use_folders = config['play']['use_folders'].get(bool)
+    if command_str:
+        command = shlex.split(command_str)
+    else:
+        # If a command isn't set, then let the OS decide how to open the
+        # playlist.
         sys_name = platform.system()
         if sys_name == 'Darwin':
-            command = 'open'
+            command = ['open']
         elif sys_name == 'Windows':
-            command = 'start'
+            command = ['start']
         else:
-            # If not Mac or Win then assume Linux(or posix based).
-            command = 'xdg-open'
+            # If not Mac or Windows, then assume Unixy.
+            command = ['xdg-open']
 
     # Preform search by album and add folders rather then tracks to playlist.
     if opts.album:
-        albums = lib.albums(ui.decargs(args))
+        selection = lib.albums(ui.decargs(args))
         paths = []
 
-        for album in albums:
-            paths.append(album.item_dir())
+        for album in selection:
+            if use_folders:
+                paths.append(album.item_dir())
+            else:
+                # TODO use core's sorting functionality
+                paths.extend([item.path for item in sorted(
+                    album.items(), key=lambda item: (item.disc, item.track))])
         item_type = 'album'
 
     # Preform item query and add tracks to playlist.
     else:
-        paths = [item.path for item in lib.items(ui.decargs(args))]
+        selection = lib.items(ui.decargs(args))
+        paths = [item.path for item in selection]
         item_type = 'track'
 
-    item_type += 's' if len(paths) > 1 else ''
+    item_type += 's' if len(selection) > 1 else ''
 
-    if not paths:
+    if not selection:
         ui.print_(ui.colorize('yellow', 'No {0} to play.'.format(item_type)))
         return
 
     # Warn user before playing any huge playlists.
-    if len(paths) > 100:
+    if len(selection) > 100:
         ui.print_(ui.colorize(
             'yellow',
-            'You are about to queue {0} {1}.'.format(len(paths), item_type)))
+            'You are about to queue {0} {1}.'.format(len(selection), item_type)
+        ))
 
         if ui.input_options(('Continue', 'Abort')) == 'a':
             return
@@ -79,10 +89,12 @@ def play_music(lib, opts, args):
         m3u.write(item + '\n')
     m3u.close()
 
+    command.append(m3u.name)
+
     # Invoke the command and log the output.
-    output = util.command_output([command, m3u.name])
+    output = util.command_output(command)
     if output:
-        log.debug(u'Output of {0}: {1}'.format(command, output))
+        log.debug(u'Output of {0}: {1}'.format(command[0], output))
 
     ui.print_(u'Playing {0} {1}.'.format(len(paths), item_type))
 
@@ -94,6 +106,7 @@ class PlayPlugin(BeetsPlugin):
 
         config['play'].add({
             'command': None,
+            'use_folders': False
         })
 
     def commands(self):
@@ -104,7 +117,7 @@ class PlayPlugin(BeetsPlugin):
         play_command.parser.add_option(
             '-a', '--album',
             action='store_true', default=False,
-            help='query and load albums (as folders) rather than tracks'
+            help='query and load albums rather than tracks'
         )
         play_command.func = play_music
         return [play_command]
