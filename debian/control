@@ -1,0 +1,87 @@
+Source: beets
+Section: sound
+Priority: optional
+Maintainer: Python Applications Packaging Team <python-apps-team@lists.alioth.debian.org>
+Uploaders:
+ Stefano Rivera <stefanor@debian.org>,
+ Simon Chopin <chopin.simon@gmail.com>
+Build-Depends:
+ debhelper (>= 8.1),
+ libc-bin (>= 2.13),
+ python-all (>= 2.6.6-3~),
+ python-docutils,
+ python-enum34,
+ python-flask,
+ python-mock,
+ python-munkres,
+ python-musicbrainzngs (>= 0.4),
+ python-mutagen (>= 1.22),
+ python-responses,
+ python-setuptools,
+ python-sphinx (>= 1.0.7+dfsg),
+ python-unidecode,
+ python-unittest2,
+ python-yaml
+X-Python-Version: >= 2.5
+Standards-Version: 3.9.5
+Homepage: http://beets.radbox.org/
+Vcs-Svn: svn://anonscm.debian.org/python-apps/packages/beets/trunk/
+Vcs-Browser: http://anonscm.debian.org/viewvc/python-apps/packages/beets/trunk/
+XS-Testsuite: autopkgtest
+
+Package: beets
+Architecture: all
+Depends:
+ libjs-backbone,
+ libjs-jquery,
+ libjs-underscore,
+ python-enum34,
+ python-musicbrainzngs (>= 0.4),
+ python-mutagen (>= 1.21),
+ python-pkg-resources,
+ ${misc:Depends},
+ ${python:Depends}
+Suggests:
+ beets-doc,
+ libav-tools,
+ mp3gain,
+ python-acoustid,
+ python-bs4,
+ python-flask,
+ python-gst0.10,
+ python-imaging,
+ python-mpd,
+ python-pylast,
+ python-requests,
+ python-rgain
+Description: music tagger and library organizer
+ Beets is a media library management system for obsessive-compulsive music
+ geeks.
+ .
+ The purpose of beets is to get your music collection right once and for all.
+ It catalogs your collection, automatically improving its metadata as it goes
+ using the MusicBrainz database.  It then provides a set of tools for
+ manipulating and accessing your music.
+ .
+ Beets also includes a music player that implements the MPD protocol, so you
+ can play music in your beets library using any MPD client.
+
+Package: beets-doc
+Architecture: all
+Section: doc
+Depends: ${misc:Depends}, ${sphinxdoc:Depends}
+Breaks: beets (<< 1.0~b14-2~)
+Replaces: beets (<< 1.0~b14-2~)
+Description: music tagger and library organizer - documentation
+ Beets is a media library management system for obsessive-compulsive music
+ geeks.
+ .
+ The purpose of beets is to get your music collection right once and for all.
+ It catalogs your collection, automatically improving its metadata as it goes
+ using the MusicBrainz database.  It then provides a set of tools for
+ manipulating and accessing your music.
+ .
+ Beets also includes a music player that implements the MPD protocol, so you
+ can play music in your beets library using any MPD client.
+ .
+ This package provides detailed documentation on beets usage.
