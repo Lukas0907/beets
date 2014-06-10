@@ -20,6 +20,7 @@ from collections import defaultdict
 import threading
 import sqlite3
 import contextlib
+import collections
 
 import beets
 from beets.util.functemplate import Template
@@ -106,6 +107,21 @@ class Model(object):
         # Initial contents.
         self.update(values)
         self.clear_dirty()
+
+    @classmethod
+    def _awaken(cls, db=None, fixed_values=None, flex_values=None):
+        """Create an object with values drawn from the database.
+
+        This is a performance optimization: the checks involved with
+        ordinary construction are bypassed.
+        """
+        obj = cls(db)
+        if fixed_values:
+            for key, value in fixed_values.items():
+                obj._values_fixed[key] = cls._fields[key].normalize(value)
+        if flex_values:
+            obj._values_flex.update(flex_values)
+        return obj
 
     def __repr__(self):
         return '{0}({1})'.format(
@@ -390,12 +406,13 @@ class Model(object):
         """Get a mapping containing all values on this object formatted
         as human-readable strings.
         """
-        # In the future, this could be made "lazy" to avoid computing
-        # fields unnecessarily.
-        out = {}
-        for key in self.keys(True):
-            out[key] = self._get_formatted(key, for_path)
-        return out
+        return FormattedMapping(self, for_path)
+
+    @property
+    def formatted(self):
+        """A `dict`-like view containing formatted values.
+        """
+        return self._formatted_mapping(False)
 
     def evaluate_template(self, template, for_path=False):
         """Evaluate a template (a string or a `Template` object) using
@@ -428,6 +445,33 @@ class Model(object):
         else:
             # Fall back to unparsed string.
             return string
+
+
+class FormattedMapping(collections.Mapping):
+    """A `dict`-like formatted view of a model.
+
+    The accessor ``mapping[key]`` returns the formated version of
+    ``model[key]``. The formatting is handled by `model._format()`.
+    """
+    # TODO Move all formatting logic here
+    # TODO Add caching
+
+    def __init__(self, model, for_path=False):
+        self.for_path = for_path
+        self.model = model
+        self.model_keys = model.keys(True)
+
+    def __getitem__(self, key):
+        if key in self.model_keys:
+            return self.model._get_formatted(key, self.for_path)
+        else:
+            raise KeyError(key)
+
+    def __iter__(self):
+        return iter(self.model_keys)
+
+    def __len__(self):
+        return len(self.model_keys)
 
 
 # Database controller and supporting interfaces.
@@ -463,13 +507,11 @@ class Results(object):
                     (row['id'],)
                 )
             values = dict(row)
-            values.update(
-                dict((row['key'], row['value']) for row in flex_rows)
-            )
+            flex_values = dict((row['key'], row['value']) for row in flex_rows)
 
             # Construct the Python object and yield it if it passes the
             # predicate.
-            obj = self.model_class(self.db, **values)
+            obj = self.model_class._awaken(self.db, values, flex_values)
             if not self.query or self.query.match(obj):
                 yield obj
 

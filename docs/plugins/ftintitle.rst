@@ -17,4 +17,8 @@ To use the plugin, just enable it and run the command::
 The query is optional; if it's left off, the transformation will be applied to
 your entire collection.
 
+If you prefer to remove featured artists entirely instead of adding them to
+the title field, either use the ``-d`` flag to the command or set the
+``ftintitle.drop`` config option.
+
 .. _MusicBrainz style: http://musicbrainz.org/doc/Style

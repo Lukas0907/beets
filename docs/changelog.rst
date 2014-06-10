@@ -1,6 +1,50 @@
 Changelog
 =========
 
+1.3.6 (May 10, 2014)
+--------------------
+
+This is primarily a bugfix release, but it also brings two new plugins: one
+for playing music in desktop players and another for organizing your
+directories into "buckets." It also brings huge performance optimizations to
+queries---your ``beet ls`` commands will now go much faster.
+
+New features:
+
+* The new :doc:`/plugins/play` lets you start your desktop music player with
+  the songs that match a query. Thanks to David Hamp-Gonsalves.
+* The new :doc:`/plugins/bucket` provides a ``%bucket{}`` function for path
+  formatting to generate folder names representing ranges of years or initial
+  letter. Thanks to Fabrice Laporte.
+* Item and album queries are much faster.
+* :doc:`/plugins/ftintitle`: A new option lets you remove featured artists
+  entirely instead of moving them to the title. Thanks to SUTJael.
+
+And those all-important bug fixes:
+
+* :doc:`/plugins/mbsync`: Fix a regression in 1.3.5 that broke the plugin
+  entirely.
+* :ref:`Shell completion <completion>` now searches more common paths for its
+  ``bash_completion`` dependency.
+* Fix encoding-related logging errors in :doc:`/plugins/convert` and
+  :doc:`/plugins/replaygain`.
+* :doc:`/plugins/replaygain`: Suppress a deprecation warning emitted by later
+  versions of PyGI.
+* Fix a crash when reading files whose iTunes SoundCheck tags contain
+  non-ASCII characters.
+* The ``%if{}`` template function now appropriately interprets the condition
+  as false when it contains the string "false". Thanks to Ayberk Yilmaz.
+* :doc:`/plugins/convert`: Fix conversion for files that include a video
+  stream by ignoring it. Thanks to brunal.
+* :doc:`/plugins/fetchart`: Log an error instead of crashing when tag
+  manipulation fails.
+* :doc:`/plugins/convert`: Log an error instead of crashing when
+  embedding album art fails.
+* :doc:`/plugins/convert`: Embed cover art into converted files.
+  Previously they were embedded into the source files.
+* New plugin event: `before_item_moved`. Thanks to Robert Speicher.
+
+
 1.3.5 (April 15, 2014)
 ----------------------
 
@@ -15,7 +59,7 @@ library module.
 
 The major new features are:
 
-* Beets can now import `zip`, `tar` and `rar` archives. Just type ``beet
+* Beets can now import `zip`, `tar`, and `rar` archives. Just type ``beet
   import music.zip`` to have beets transparently extract the files to import.
 * :doc:`/plugins/replaygain`: Added support for calculating ReplayGain values
   with GStreamer as well the mp3gain program. This enables ReplayGain
@@ -28,8 +72,8 @@ The major new features are:
 In particular, a full complement of features for supporting musical keys are
 new in this release:
 
-* A new `initial_key` is available in the database and files' tags. You can
-  set the field manually using a command like ``beet modify
+* A new `initial_key` field is available in the database and files' tags. You
+  can set the field manually using a command like ``beet modify
   initial_key=Am``.
 * The :doc:`/plugins/echonest` sets the `initial_key` field if the data is
   available.

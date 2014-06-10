@@ -101,7 +101,8 @@ def encode(source, dest):
         'dest':   pipes.quote(dest),
     })
 
-    log.debug(u'convert: executing: {0}'.format(command))
+    log.debug(u'convert: executing: {0}'
+              .format(util.displayable_path(command)))
 
     try:
         util.command_output(command, shell=True)
@@ -189,7 +190,12 @@ def convert_item(dest_dir, keep_new, path_formats):
             if album:
                 artpath = album.artpath
                 if artpath:
-                    _embed(artpath, [item])
+                    try:
+                        _embed(artpath, [converted])
+                    except IOError as exc:
+                        log.warn(u'could not embed cover art in {0}: {1}'
+                                 .format(util.displayable_path(item.path),
+                                         exc))
 
         plugins.send('after_convert', item=item, dest=dest, keepnew=keep_new)
 
@@ -254,34 +260,34 @@ class ConvertPlugin(BeetsPlugin):
             u'format': u'mp3',
             u'formats': {
                 u'aac': {
-                    u'command': u'ffmpeg -i $source -y -acodec libfaac '
+                    u'command': u'ffmpeg -i $source -y -vn -acodec libfaac '
                                 u'-aq 100 $dest',
                     u'extension': u'm4a',
                 },
                 u'alac': {
-                    u'command': u'ffmpeg -i $source -y -acodec alac $dest',
+                    u'command': u'ffmpeg -i $source -y -vn -acodec alac $dest',
                     u'extension': u'm4a',
                 },
                 u'flac': {
-                    u'command': u'ffmpeg -i $source -y -acodec flac $dest',
+                    u'command': u'ffmpeg -i $source -y -vn -acodec flac $dest',
                     u'extension': u'flac',
                 },
                 u'mp3': {
-                    u'command': u'ffmpeg -i $source -y -aq 2 $dest',
+                    u'command': u'ffmpeg -i $source -y -vn -aq 2 $dest',
                     u'extension': u'mp3',
                 },
                 u'opus': {
-                    u'command': u'ffmpeg -i $source -y -acodec libopus -vn '
+                    u'command': u'ffmpeg -i $source -y -vn -acodec libopus '
                                 u'-ab 96k $dest',
                     u'extension': u'opus',
                 },
                 u'ogg': {
-                    u'command': u'ffmpeg -i $source -y -acodec libvorbis -vn '
+                    u'command': u'ffmpeg -i $source -y -vn -acodec libvorbis '
                                 u'-aq 2 $dest',
                     u'extension': u'ogg',
                 },
                 u'windows media': {
-                    u'command': u'ffmpeg -i $source -y -acodec wmav2 '
+                    u'command': u'ffmpeg -i $source -y -vn -acodec wmav2 '
                                 u'-vn $dest',
                     u'extension': u'wma',
                 },

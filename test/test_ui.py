@@ -18,6 +18,7 @@ import os
 import shutil
 import re
 import subprocess
+import platform
 
 import _common
 from _common import unittest
@@ -472,32 +473,6 @@ class PrintTest(_common.TestCase):
                 del os.environ['LC_CTYPE']
 
 
-class AutotagTest(_common.TestCase):
-    def setUp(self):
-        super(AutotagTest, self).setUp()
-        self.io.install()
-
-    def _no_candidates_test(self, result):
-        task = importer.ImportTask(
-            'toppath',
-            'path',
-            [_common.item()],
-        )
-        task.set_candidates('artist', 'album', [], autotag.Recommendation.none)
-        session = _common.import_session(cli=True)
-        res = session.choose_match(task)
-        self.assertEqual(res, result)
-        self.assertTrue('No match' in self.io.getoutput())
-
-    def test_choose_match_with_no_candidates_skip(self):
-        self.io.addinput('s')
-        self._no_candidates_test(importer.action.SKIP)
-
-    def test_choose_match_with_no_candidates_asis(self):
-        self.io.addinput('u')
-        self._no_candidates_test(importer.action.ASIS)
-
-
 class ImportTest(_common.TestCase):
     def test_quiet_timid_disallowed(self):
         config['import']['quiet'] = True
@@ -527,7 +502,14 @@ class ConfigTest(_common.TestCase):
         commands.default_commands.append(self.test_cmd)
 
         # Default user configuration
-        self.user_config_dir = os.path.join(self.temp_dir, '.config', 'beets')
+        if platform.system() == 'Windows':
+            self.user_config_dir = os.path.join(
+                self.temp_dir, 'AppData', 'Roaming', 'beets'
+            )
+        else:
+            self.user_config_dir = os.path.join(
+                self.temp_dir, '.config', 'beets'
+            )
         os.makedirs(self.user_config_dir)
         self.user_config_path = os.path.join(self.user_config_dir,
                                              'config.yaml')
@@ -544,6 +526,8 @@ class ConfigTest(_common.TestCase):
             del os.environ['BEETSDIR']
         if os.getcwd != self._orig_cwd:
             os.chdir(self._orig_cwd)
+        if hasattr(self.test_cmd, 'lib'):
+            self.test_cmd.lib._connection().close()
         super(ConfigTest, self).tearDown()
 
     def _make_test_cmd(self):

@@ -20,15 +20,15 @@ import StringIO
 from tempfile import mkstemp
 from zipfile import ZipFile
 from tarfile import TarFile
+from mock import patch
 
 import _common
 from _common import unittest
 from helper import TestImportSession, TestHelper, has_program
-from beets import library
 from beets import importer
 from beets.mediafile import MediaFile
 from beets import autotag
-from beets.autotag import AlbumInfo, TrackInfo, AlbumMatch, TrackMatch
+from beets.autotag import AlbumInfo, TrackInfo, AlbumMatch
 from beets import config
 
 
@@ -867,12 +867,9 @@ class InferAlbumDataTest(_common.TestCase):
                                         items=self.items)
         self.task.set_null_candidates()
 
-    def _infer(self):
-        importer._infer_album_fields(self.task)
-
     def test_asis_homogenous_single_artist(self):
         self.task.set_choice(importer.action.ASIS)
-        self._infer()
+        self.task.infer_album_fields()
         self.assertFalse(self.items[0].comp)
         self.assertEqual(self.items[0].albumartist, self.items[2].artist)
 
@@ -881,7 +878,7 @@ class InferAlbumDataTest(_common.TestCase):
         self.items[1].artist = 'some other artist'
         self.task.set_choice(importer.action.ASIS)
 
-        self._infer()
+        self.task.infer_album_fields()
 
         self.assertTrue(self.items[0].comp)
         self.assertEqual(self.items[0].albumartist, 'Various Artists')
@@ -891,7 +888,7 @@ class InferAlbumDataTest(_common.TestCase):
         self.items[1].artist = 'some other artist'
         self.task.set_choice(importer.action.ASIS)
 
-        self._infer()
+        self.task.infer_album_fields()
 
         for item in self.items:
             self.assertTrue(item.comp)
@@ -901,7 +898,7 @@ class InferAlbumDataTest(_common.TestCase):
         self.items[0].artist = 'another artist'
         self.task.set_choice(importer.action.ASIS)
 
-        self._infer()
+        self.task.infer_album_fields()
 
         self.assertFalse(self.items[0].comp)
         self.assertEqual(self.items[0].albumartist, self.items[2].artist)
@@ -914,7 +911,7 @@ class InferAlbumDataTest(_common.TestCase):
             item.mb_albumartistid = 'some album artist id'
         self.task.set_choice(importer.action.ASIS)
 
-        self._infer()
+        self.task.infer_album_fields()
 
         self.assertEqual(self.items[0].albumartist,
                          'some album artist')
@@ -924,7 +921,7 @@ class InferAlbumDataTest(_common.TestCase):
     def test_apply_gets_artist_and_id(self):
         self.task.set_choice(AlbumMatch(0, None, {}, set(), set()))  # APPLY
 
-        self._infer()
+        self.task.infer_album_fields()
 
         self.assertEqual(self.items[0].albumartist, self.items[0].artist)
         self.assertEqual(self.items[0].mb_albumartistid,
@@ -936,7 +933,7 @@ class InferAlbumDataTest(_common.TestCase):
             item.mb_albumartistid = 'some album artist id'
         self.task.set_choice(AlbumMatch(0, None, {}, set(), set()))  # APPLY
 
-        self._infer()
+        self.task.infer_album_fields()
 
         self.assertEqual(self.items[0].albumartist,
                          'some album artist')
@@ -947,122 +944,155 @@ class InferAlbumDataTest(_common.TestCase):
         self.items = [self.items[0]]
         self.task.items = self.items
         self.task.set_choice(importer.action.ASIS)
-        self._infer()
+        self.task.infer_album_fields()
         self.assertFalse(self.items[0].comp)
 
-    def test_first_item_null_apply(self):
-        self.items[0] = None
-        self.task.set_choice(AlbumMatch(0, None, {}, set(), set()))  # APPLY
-        self._infer()
-        self.assertFalse(self.items[1].comp)
-        self.assertEqual(self.items[1].albumartist, self.items[2].artist)
 
+class ImportDuplicateAlbumTest(unittest.TestCase, TestHelper):
 
-class DuplicateCheckTest(_common.TestCase):
     def setUp(self):
-        super(DuplicateCheckTest, self).setUp()
+        self.setup_beets()
 
-        self.lib = library.Library(':memory:')
-        self.i = _common.item()
-        self.album = self.lib.add_album([self.i])
+        # Original album
+        self.add_album_fixture(albumartist=u'artist', album=u'album')
 
-    def _album_task(self, asis, artist=None, album=None, existing=False):
-        if existing:
-            item = self.i
-        else:
-            item = _common.item()
-        artist = artist or item.albumartist
-        album = album or item.album
-
-        task = importer.ImportTask(paths=['a path'], toppath='top path',
-                                   items=[item])
-        task.set_candidates(artist, album, None, None)
-        if asis:
-            task.set_choice(importer.action.ASIS)
-        else:
-            info = AlbumInfo(album, None, artist, None, None)
-            task.set_choice(AlbumMatch(0, info, {}, set(), set()))
-        return task
-
-    def _item_task(self, asis, artist=None, title=None, existing=False):
-        if existing:
-            item = self.i
-        else:
-            item = _common.item()
-        artist = artist or item.artist
-        title = title or item.title
-
-        task = importer.ImportTask.item_task(item)
-        if asis:
-            item.artist = artist
-            item.title = title
-            task.set_choice(importer.action.ASIS)
-        else:
-            task.set_choice(TrackMatch(0, TrackInfo(title, None, artist)))
-        return task
-
-    def test_duplicate_album_apply(self):
-        res = importer._duplicate_check(self.lib, self._album_task(False))
-        self.assertTrue(res)
-
-    def test_different_album_apply(self):
-        res = importer._duplicate_check(self.lib,
-                                        self._album_task(False, 'xxx', 'yyy'))
-        self.assertFalse(res)
-
-    def test_duplicate_album_asis(self):
-        res = importer._duplicate_check(self.lib, self._album_task(True))
-        self.assertTrue(res)
-
-    def test_different_album_asis(self):
-        res = importer._duplicate_check(self.lib,
-                                        self._album_task(True, 'xxx', 'yyy'))
-        self.assertFalse(res)
-
-    def test_duplicate_va_album(self):
-        self.album.albumartist = 'an album artist'
-        self.album.store()
-        res = importer._duplicate_check(
-            self.lib,
-            self._album_task(False, 'an album artist')
+        # Create duplicate through autotagger
+        self.match_album_patcher = patch('beets.autotag.mb.match_album')
+        self.match_album = self.match_album_patcher.start()
+        track_info = TrackInfo(
+            title=u'new title',
+            track_id=u'trackid',
         )
-        self.assertTrue(res)
-
-    def test_duplicate_item_apply(self):
-        res = importer._item_duplicate_check(self.lib,
-                                             self._item_task(False))
-        self.assertTrue(res)
-
-    def test_different_item_apply(self):
-        res = importer._item_duplicate_check(
-            self.lib,
-            self._item_task(False, 'xxx', 'yyy')
+        album_info = AlbumInfo(
+            artist=u'artist',
+            album=u'album',
+            tracks=[track_info],
+            album_id=u'albumid',
+            artist_id=u'artistid',
         )
-        self.assertFalse(res)
+        self.match_album.return_value = iter([album_info])
 
-    def test_duplicate_item_asis(self):
-        res = importer._item_duplicate_check(self.lib,
-                                             self._item_task(True))
-        self.assertTrue(res)
+        # Create import session
+        self.importer = self.create_importer()
+        config['import']['autotag'] = True
 
-    def test_different_item_asis(self):
-        res = importer._item_duplicate_check(
-            self.lib,
-            self._item_task(True, 'xxx', 'yyy')
+    def tearDown(self):
+        self.match_album_patcher.stop()
+        self.teardown_beets()
+
+    def test_remove_duplicate_album(self):
+        item = self.lib.items().get()
+        self.assertEqual(item.title, u't\xeftle 0')
+        self.assertTrue(os.path.isfile(item.path))
+
+        self.importer.default_resolution = self.importer.Resolution.REMOVE
+        self.importer.run()
+
+        self.assertFalse(os.path.isfile(item.path))
+        self.assertEqual(len(self.lib.albums()), 1)
+        self.assertEqual(len(self.lib.items()), 1)
+        item = self.lib.items().get()
+        self.assertEqual(item.title, u'new title')
+
+    def test_keep_duplicate_album(self):
+        self.importer.default_resolution = self.importer.Resolution.KEEPBOTH
+        self.importer.run()
+
+        self.assertEqual(len(self.lib.albums()), 2)
+        self.assertEqual(len(self.lib.items()), 2)
+
+    def test_skip_duplicate_album(self):
+        item = self.lib.items().get()
+        self.assertEqual(item.title, u't\xeftle 0')
+
+        self.importer.default_resolution = self.importer.Resolution.SKIP
+        self.importer.run()
+
+        self.assertEqual(len(self.lib.albums()), 1)
+        self.assertEqual(len(self.lib.items()), 1)
+        item = self.lib.items().get()
+        self.assertEqual(item.title, u't\xeftle 0')
+
+    def test_twice_in_import_dir(self):
+        self.skipTest('write me')
+
+    def add_album_fixture(self, **kwargs):
+        # TODO move this into upstream
+        album = super(ImportDuplicateAlbumTest, self).add_album_fixture()
+        album.update(kwargs)
+        album.store()
+        return album
+
+
+class ImportDuplicateSingletonTest(unittest.TestCase, TestHelper):
+
+    def setUp(self):
+        self.setup_beets()
+
+        # Original file in library
+        self.add_item_fixture(artist=u'artist', title=u'title',
+                              mb_trackid='old trackid')
+
+        # Create duplicate through autotagger
+        self.match_track_patcher = patch('beets.autotag.mb.match_track')
+        self.match_track = self.match_track_patcher.start()
+        track_info = TrackInfo(
+            artist=u'artist',
+            title=u'title',
+            track_id=u'new trackid',
         )
-        self.assertFalse(res)
+        self.match_track.return_value = iter([track_info])
 
-    def test_duplicate_album_existing(self):
-        res = importer._duplicate_check(self.lib,
-                                        self._album_task(False, existing=True))
-        self.assertFalse(res)
+        # Import session
+        self.importer = self.create_importer()
+        config['import']['autotag'] = True
+        config['import']['singletons'] = True
 
-    def test_duplicate_item_existing(self):
-        res = importer._item_duplicate_check(
-            self.lib,
-            self._item_task(False, existing=True)
-        )
-        self.assertFalse(res)
+    def tearDown(self):
+        self.match_track_patcher.stop()
+        self.teardown_beets()
+
+    def test_remove_duplicate(self):
+        item = self.lib.items().get()
+        self.assertEqual(item.mb_trackid, u'old trackid')
+        self.assertTrue(os.path.isfile(item.path))
+
+        self.importer.default_resolution = self.importer.Resolution.REMOVE
+        self.importer.run()
+
+        self.assertFalse(os.path.isfile(item.path))
+        self.assertEqual(len(self.lib.items()), 1)
+        item = self.lib.items().get()
+        self.assertEqual(item.mb_trackid, u'new trackid')
+
+    def test_keep_duplicate(self):
+        self.assertEqual(len(self.lib.items()), 1)
+
+        self.importer.default_resolution = self.importer.Resolution.KEEPBOTH
+        self.importer.run()
+
+        self.assertEqual(len(self.lib.items()), 2)
+
+    def test_skip_duplicate(self):
+        item = self.lib.items().get()
+        self.assertEqual(item.mb_trackid, u'old trackid')
+
+        self.importer.default_resolution = self.importer.Resolution.SKIP
+        self.importer.run()
+
+        self.assertEqual(len(self.lib.items()), 1)
+        item = self.lib.items().get()
+        self.assertEqual(item.mb_trackid, u'old trackid')
+
+    def test_twice_in_import_dir(self):
+        self.skipTest('write me')
+
+    def add_item_fixture(self, **kwargs):
+        # Move this to TestHelper
+        item = self.add_item_fixtures()[0]
+        item.update(kwargs)
+        item.store()
+        return item
 
 
 class TagLogTest(_common.TestCase):
@@ -1077,6 +1107,53 @@ class TagLogTest(_common.TestCase):
         session = _common.import_session(logfile=sio)
         session.tag_log('status', 'caf\xc3\xa9')
         assert 'status caf' in sio.getvalue()
+
+
+class ResumeImportTest(unittest.TestCase, TestHelper):
+
+    def setUp(self):
+        self.setup_beets()
+
+    def tearDown(self):
+        self.teardown_beets()
+
+    @patch('beets.plugins.send')
+    def test_resume_album(self, plugins_send):
+        self.importer = self.create_importer(album_count=2)
+        self.config['import']['resume'] = True
+
+        def raise_exception(event, **kwargs):
+            if event == 'album_imported':
+                raise importer.ImportAbort
+        plugins_send.side_effect = raise_exception
+
+        self.importer.run()
+        self.assertEqual(len(self.lib.albums()), 1)
+        self.assertIsNotNone(self.lib.albums('album:album 0').get())
+
+        self.importer.run()
+        self.assertEqual(len(self.lib.albums()), 2)
+        self.assertIsNotNone(self.lib.albums('album:album 1').get())
+
+    @unittest.skip('not working yet')
+    @patch('beets.plugins.send')
+    def test_resume_singleton(self, plugins_send):
+        self.importer = self.create_importer(item_count=2)
+        self.config['import']['resume'] = True
+        self.config['import']['singletons'] = True
+
+        def raise_exception(event, **kwargs):
+            if event == 'item_imported':
+                raise importer.ImportAbort
+        plugins_send.side_effect = raise_exception
+
+        self.importer.run()
+        self.assertEqual(len(self.lib.items()), 1)
+        self.assertIsNotNone(self.lib.items('title:track 0').get())
+
+        self.importer.run()
+        self.assertEqual(len(self.lib.items()), 2)
+        self.assertIsNotNone(self.lib.items('title:track 1').get())
 
 
 def suite():

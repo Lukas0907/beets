@@ -94,6 +94,19 @@ class PathType(types.Type):
     def parse(self, string):
         return normpath(bytestring_path(string))
 
+    def normalize(self, value):
+        if isinstance(value, unicode):
+            # Paths stored internally as encoded bytes.
+            return bytestring_path(value)
+
+        elif isinstance(value, buffer):
+            # SQLite must store bytestings as buffers to avoid decoding.
+            # We unwrap buffers to bytes.
+            return bytes(value)
+
+        else:
+            return value
+
 
 # Special path format key.
 PF_KEY_DEFAULT = 'default'
@@ -397,6 +410,8 @@ class Item(LibModel):
             plugins.send("item_copied", item=self, source=self.path,
                          destination=dest)
         else:
+            plugins.send("before_item_moved", item=self, source=self.path,
+                         destination=dest)
             util.move(self.path, dest)
             plugins.send("item_moved", item=self, source=self.path,
                          destination=dest)
@@ -483,23 +498,7 @@ class Item(LibModel):
         """Get a mapping containing string-formatted values from either
         this item or the associated album, if any.
         """
-        mapping = super(Item, self)._formatted_mapping(for_path)
-
-        # Merge in album-level fields.
-        album = self.get_album()
-        if album:
-            for key in album.keys(True):
-                if key in Album.item_keys or key not in self._fields.keys():
-                    mapping[key] = album._get_formatted(key, for_path)
-
-        # Use the album artist if the track artist is not set and
-        # vice-versa.
-        if not mapping['artist']:
-            mapping['artist'] = mapping['albumartist']
-        if not mapping['albumartist']:
-            mapping['albumartist'] = mapping['artist']
-
-        return mapping
+        return FormattedItemMapping(self, for_path)
 
     def destination(self, fragment=False, basedir=None, platform=None,
                     path_formats=None):
@@ -569,6 +568,48 @@ class Item(LibModel):
             return subpath
         else:
             return normpath(os.path.join(basedir, subpath))
+
+
+class FormattedItemMapping(dbcore.db.FormattedMapping):
+    """A `dict`-like formatted view of an item that inherits album fields.
+
+    The accessor ``mapping[key]`` returns the formated version of either
+    ``item[key]`` or ``album[key]``. Here `album` is the album
+    associated to `item` if it exists.
+    """
+    # FIXME This class should be in the same module as `FormattedMapping`
+
+    def __init__(self, item, for_path=False):
+        self.for_path = for_path
+        self.model = item
+        self.model_keys = item.keys(True)
+        self.album = item.get_album()
+        self.album_keys = []
+        if self.album:
+            for key in self.album.keys(True):
+                if key in Album.item_keys or key not in item._fields.keys():
+                    self.album_keys.append(key)
+
+    def get(self, key):
+        if key in self.album_keys:
+            return self.album._get_formatted(key, self.for_path)
+        elif key in self.model_keys:
+            return self.model._get_formatted(key, self.for_path)
+        else:
+            raise KeyError(key)
+
+    def __getitem__(self, key):
+        value = self.get(key)
+
+        if key == 'artist' and not value:
+            return self.get('albumartist')
+        if key == 'albumartist' and not value:
+            return self.get('artist')
+
+        return value
+
+    def __contains__(self, key):
+        return key in self.model_keys or key in self.album_keys
 
 
 class Album(LibModel):
@@ -658,15 +699,6 @@ class Album(LibModel):
         getters = plugins.album_field_getters()
         getters['path'] = Album.item_dir
         return getters
-
-    def __setitem__(self, key, value):
-        """Set the value of an album attribute."""
-        if key == 'artpath':
-            if isinstance(value, unicode):
-                value = bytestring_path(value)
-            elif isinstance(value, buffer):
-                value = bytes(value)
-        super(Album, self).__setitem__(key, value)
 
     def items(self):
         """Returns an iterable over the items associated with this
@@ -985,10 +1017,15 @@ class Library(dbcore.Database):
         return obj.id
 
     def add_album(self, items):
-        """Create a new album consisting of a list of items. The items
-        are added to the database if they don't yet have an ID. Return a
-        new :class:`Album` object.
+        """Create a new album consisting of a list of items.
+
+        The items are added to the database if they don't yet have an
+        ID. Return a new :class:`Album` object. The list items must not
+        be empty.
         """
+        if not items:
+            raise ValueError(u'need at least one item')
+
         # Create the album structure using metadata from the first item.
         values = dict((key, items[0][key]) for key in Album.item_keys)
         album = Album(self, **values)
@@ -1121,9 +1158,13 @@ class DefaultTemplateFunctions(object):
         otherwise, emit ``falseval`` (if provided).
         """
         try:
-            condition = _int_arg(condition)
+            int_condition = _int_arg(condition)
         except ValueError:
-            condition = condition.strip()
+            if condition.lower() == "false":
+                return falseval
+        else:
+            condition = int_condition
+
         if condition:
             return trueval
         else:

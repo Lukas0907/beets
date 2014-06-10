@@ -48,6 +48,7 @@ by typing ``beet version``.
    ihate
    convert
    info
+   play
    smartplaylist
    mbsync
    missing
@@ -57,6 +58,7 @@ by typing ``beet version``.
    fromfilename
    ftintitle
    keyfinder
+   bucket
 
 Autotagger Extensions
 ---------------------
@@ -101,6 +103,8 @@ Path Formats
 * :doc:`rewrite`: Substitute values in path formats.
 * :doc:`the`: Move patterns in path formats (i.e., move "a" and "the" to the
   end).
+* :doc:`bucket`: Group your files into bucket directories that cover different
+  field values ranges.
 
 Interoperability
 ----------------
@@ -109,6 +113,7 @@ Interoperability
   changes.
 * :doc:`importfeeds`: Keep track of imported files via ``.m3u`` playlist file(s) or symlinks.
 * :doc:`smartplaylist`: Generate smart playlists based on beets queries.
+* :doc:`play`: Play beets queries in your music player.
 
 Miscellaneous
 -------------

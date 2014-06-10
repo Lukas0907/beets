@@ -18,10 +18,11 @@ import os
 import collections
 import itertools
 import sys
+import warnings
 
 from beets import ui
 from beets.plugins import BeetsPlugin
-from beets.util import syspath, command_output
+from beets.util import syspath, command_output, displayable_path
 from beets import config
 
 log = logging.getLogger('beets')
@@ -134,6 +135,7 @@ class CommandBackend(Backend):
 
         supported_items = filter(self.format_supported, album.items())
         if len(supported_items) != len(album.items()):
+            log.debug('replaygain: tracks are of unsupported format')
             return AlbumGain(None, [])
 
         output = self.compute_gain(supported_items, True)
@@ -179,7 +181,8 @@ class CommandBackend(Backend):
         cmd = cmd + [syspath(i.path) for i in items]
 
         log.debug(u'replaygain: analyzing {0} files'.format(len(items)))
-        log.debug(u"replaygain: executing %s" % " ".join(cmd))
+        log.debug(u"replaygain: executing {0}"
+                  .format(" ".join(map(displayable_path, cmd))))
         output = call(cmd)
         log.debug(u'replaygain: analysis finished')
         results = self.parse_tool_output(output,
@@ -272,7 +275,9 @@ class GStreamerBackend(object):
             from gi.repository import GObject, Gst, GLib
             # Calling GObject.threads_init() is not needed for
             # PyGObject 3.10.2+
-            GObject.threads_init()
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                GObject.threads_init()
             Gst.init([sys.argv[0]])
         except:
             raise FatalReplayGainError("GStreamer failed to initialize")
@@ -597,8 +602,7 @@ class ReplayGainPlugin(BeetsPlugin):
             return
 
         if task.is_album:
-            album = session.lib.get_album(task.album_id)
-            self.handle_album(album, False)
+            self.handle_album(task.album, False)
         else:
             self.handle_track(task.item, False)
 
