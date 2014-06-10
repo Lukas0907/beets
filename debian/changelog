@@ -1,4 +1,4 @@
-beets (1.3.5-1) UNRELEASED; urgency=low
+beets (1.3.6-1) UNRELEASED; urgency=low
 
   [ Stefano Rivera ]
   * New upstream release. (Closes: #745582)
@@ -13,7 +13,10 @@ beets (1.3.5-1) UNRELEASED; urgency=low
     - Build-depend on python-flask
   * Drop no-namespace-pkg patch, fixed upstream
 
- -- Jackson Doak <noskcaj@ubuntu.com>  Sun, 16 Mar 2014 14:52:51 +1100
+  [ Lukas Anzinger ]
+  * New upstream release (1.3.6)
+
+ -- Lukas Anzinger <lukas@lukasanzinger.at>  Tue, 10 Jun 2014 21:28:00 +0200
 
 beets (1.3.1-1) unstable; urgency=low
 
