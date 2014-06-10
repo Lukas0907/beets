@@ -8,6 +8,7 @@ Uploaders:
 Build-Depends:
  debhelper (>= 8.1),
  libc-bin (>= 2.13),
+ mp3gain,
  python-all (>= 2.6.6-3~),
  python-docutils,
  python-enum34,
@@ -16,6 +17,7 @@ Build-Depends:
  python-munkres,
  python-musicbrainzngs (>= 0.4),
  python-mutagen (>= 1.22),
+ python-nose,
  python-responses,
  python-setuptools,
  python-sphinx (>= 1.0.7+dfsg),
