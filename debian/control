@@ -16,7 +16,7 @@ Build-Depends:
  python-mock,
  python-munkres,
  python-musicbrainzngs (>= 0.4),
- python-mutagen (>= 1.22),
+ python-mutagen (>= 1.23),
  python-nose,
  python-responses,
  python-setuptools,
@@ -39,7 +39,7 @@ Depends:
  libjs-underscore,
  python-enum34,
  python-musicbrainzngs (>= 0.4),
- python-mutagen (>= 1.21),
+ python-mutagen (>= 1.23),
  python-pkg-resources,
  ${misc:Depends},
  ${python:Depends}
